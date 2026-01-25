@@ -5,4 +5,4 @@ from ultrasonic_sensor import test_ultrasonic_sensor
 if __name__ == "__main__":
     # test_ultrasonic_sensor()
     # test_TMF8x01_get_distance()
-    # test_vl53l0x()
+    test_vl53l0x()
