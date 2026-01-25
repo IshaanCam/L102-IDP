@@ -1,0 +1,105 @@
+functions:
+- left_turn() -> None:
+    - Move the robot forward until the rear wheels line up with the line (distance x)
+    - Power the left motor only to turn 90degs
+
+- right_turn() -> None:
+    - Move the robot forward until the rear wheels line up with the line (distance x)
+    - Power the right motor only to turn 90degs
+
+- pick_up_box
+    - 
+
+- drop_box
+    - 
+
+- measure_resistance() -> int:
+    - Output signal from pin GPIO.
+    - Measure signal at ADC pin
+    - Return resistance
+
+- turn_on_led(color) -> None:
+    - Turn on "color" LED
+
+- find_empty_space() -> bool:
+    - Move forward a distance y until the ultrasonic sensor lines up with the space
+    - measure distance as the output of the sensor
+    - return distance > 10 (or whatever the distance to the center of the bay is)
+
+
+
+- start() -> None:
+    - Move the motor forward
+    - Detet white line on FR and FL sensors. Ignore
+    - Detet white line on FR and FL sensors. 
+    - Execute left_turn()
+    - Move forward
+    - Detect white line on FR sensor. 
+    - Execute left_turn()
+    - Exit function
+
+- find_and_deliver()
+    - for bay in states:
+        - Execute pick_up_box()
+        - Execute x = measure_resistance()
+        - Execute turn_on_led(resistance[x][1])
+        - Execute globals()[bay + "_to_" + resistance[x][0]]
+    
+- bay_1_to_upper_a()
+- bay_1_to_upper_b()
+- bay_1_to_lower_a()
+- bay_1_to_lower_b()
+
+- bay_2_to_upper_a()
+- bay_2_to_upper_b()
+- bay_2_to_lower_a()
+- bay_2_to_lower_b()
+
+- bay_3_to_upper_a()
+- bay_3_to_upper_b()
+- bay_3_to_lower_a()
+- bay_3_to_lower_b() -> None:
+    - Move the motors backwards
+    - Detect white line on BR and BL sensor.
+    - Turn the left motor only (in reverse) for a 90deg turn
+    - Move forward
+    - Detect white line on FR and FL sensor.
+    - Execute left_turn()
+    - empty_space = false
+    - while not empty_space:
+        - Move forward.
+        - Detect white line on FR and FL sensor.
+        - Execute empty_space = find_empty_space()
+    - Execute left_turn()
+    - Execute drop_box()
+    - Move the motors backwards
+    - Detect white line on BR and BL sensor.
+    - Turn the left motor only (in reverse) for a 90deg turn
+    - Move forward
+    - Detect white line on FR and FL sensors
+    - return
+
+- bay_4_to_upper_a()
+- bay_4_to_upper_b()
+- bay_4_to_lower_a()
+- bay_4_to_lower_b()
+
+Dicts:
+- resistance = {
+    100: ['upper_a', blue],
+    1000: ['lower_a', green],
+    10000: ['upper_b', 'B', red],
+    100000: ['lower_b', 'B', yellow]
+}
+- states = [
+    'bay_3',
+    'bay_4',
+    'bay_1',
+    'bay_2'
+]
+
+main:
+    - start()
+    - find_and_deliver()
+
+    
