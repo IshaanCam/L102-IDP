@@ -29,12 +29,12 @@ class PID:
     
     def update(self, e):
         t = utime.ticks_ms()
-        dt = utime.ticks_diff(t, self.t_prev) / 1000    # dividing by 1000 to convert to seconds
+        dt = utime.ticks_diff(t, self.t_prev) / 1000.0   # dividing by 1000 to convert to seconds
         self.t_prev = t
         if dt <= 0:
             dt = 0.001  # protection from divide by 0 error
         
-        self.I = e * dt
+        self.I += e * dt
         D = (e - self.e_prev) / dt
         self.e_prev = e
 
@@ -50,7 +50,8 @@ class PID:
 
 WEIGHTS = [-2, -1, 1, 2] #  These will be used for finding our centroid (negative for left, positive for right)
 
-# ASSUMING BLACK IS HIGH 
+# ASSUMING WHITE IS HIGH
+
 digital_pins = [10, 11, 12, 13]  #GPIO pin numbers
 digital = [Pin(i, Pin.IN) for i in digital_pins]
 
@@ -69,6 +70,9 @@ def centroid_position(vals, weights):
         val_weight_sum += (1-vi) * wi
         val_sum += (1-vi)
     
+    if val_sum == 0:
+        return None, 0
+    
     return val_weight_sum / val_sum, val_sum
 
         
@@ -84,11 +88,16 @@ def main():
     while True:
 
         sensor_vals = read_sensors(digital)
-        print(sensor_vals)
 
         pos, sum = centroid_position(sensor_vals, WEIGHTS)
 
+        if pos is None:
+            pos = prev_pos
+            print("T Junction detected")
+
+
         e = -pos
+        prev_pos = pos  # storing in case of T junction detected
         correction = pid.update(e)
 
         cmd_left = base_speed - correction
