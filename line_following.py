@@ -48,7 +48,7 @@ class PID:
     
 
 
-WEIGHTS = [-2.0, -1.0, 1.0, 2.0] #  These will be used for finding our centroid (negative for left, positive for right)
+WEIGHTS = [-2, -1, 1, 2] #  These will be used for finding our centroid (negative for left, positive for right)
 
 # ASSUMING BLACK IS HIGH 
 digital_pins = [10, 11, 12, 13]  #GPIO pin numbers
@@ -66,8 +66,8 @@ def centroid_position(vals, weights):
     val_sum = 0.0
 
     for vi, wi in zip(vals, weights):
-        val_weight_sum += vi * wi
-        val_sum += vi
+        val_weight_sum += (1-vi) * wi
+        val_sum += (1-vi)
     
     return val_weight_sum / val_sum, val_sum
 
@@ -77,21 +77,22 @@ def main():
     left_motor = Motor(dirPin = 4, PWMPin = 5)    
     right_motor = Motor(dirPin = 7, PWMPin = 6)
 
-    pid = PID(Kp=0.5, Ki=0.5, Kd=0.5, output_limits=(-30,30))
+    pid = PID(Kp=100, Ki=0, Kd=0, output_limits=(-50,50))
 
-    base_speed = 50     # This is a % of the max speed
+    base_speed = 50    # This is a % of the max speed
 
     while True:
 
         sensor_vals = read_sensors(digital)
+        print(sensor_vals)
 
         pos, sum = centroid_position(sensor_vals, WEIGHTS)
 
         e = -pos
         correction = pid.update(e)
 
-        cmd_left = base_speed + correction
-        cmd_right = base_speed - correction
+        cmd_left = base_speed - correction
+        cmd_right = base_speed + correction
 
         cmd_left = max(0, min(100, cmd_left))
         cmd_right = max(0, min(100, cmd_right))
@@ -100,3 +101,8 @@ def main():
         right_motor.Forward(cmd_right)
 
         utime.sleep(0.01)
+
+main()
+
+
+
