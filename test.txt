@@ -141,11 +141,15 @@ Dicts:
         (bay_2, upper_b): right,
     },
     entrance_lower_b: {
-        (bay_1, upper_a): forward,
-        (bay_1, upper_b): forward,
-        (bay_2, upper_a): forward,
-        (bay_2, upper_b): forward,
+        (bay_3, upper_a): forward,
+        (bay_3, upper_b): forward,
+        (bay_4, upper_a): forward,
+        (bay_4, upper_b): forward,
     },
+    exit_lower_b: {
+        (upper_a: bay_4): forward,
+        (upper_b: bay_4): forward,
+    }
     top_of_ramp: {
         (bay_1, upper_a): right,
         (bay_2, upper_a): right,
@@ -186,6 +190,12 @@ Dicts:
         (bay_2, upper_a): forward,
         (bay_2, upper_b): forward,
     },
+    exit_lower_a: {
+        (upper_a, bay_1): forward,
+        (upper_b, bay_1): forward,
+        (upper_a, bay_2): forward,
+        (upper_b, bay_2): forward,
+    }
     bay_1_entrance: {
         (bay_1, lower_a): forward,
         (bay_2, lower_a): right, 
@@ -225,9 +235,9 @@ Dicts:
 }
 
 states = [
-    'moving',
+    'pre-pickup_move',
     'pick_up_box',
-    'moving',
+    'pre-delivery_move',
     'deliver_box'
 ]
 
@@ -236,41 +246,41 @@ to_and_fro = {
 
     'bay_3_to_upper_a': [bay_3_entrance, bay_4_entrance, entrance_lower_b, back_right_corner, ramp, top_of_ramp, corner_before_upper_a],
     'bay_3_to_upper_b': [bay_3_entrance, bay_4_entrance, entrance_lower_b, back_right_corner, ramp, top_of_ramp, corner_before_upper_b],
-    'bay_3_to_lower_a': [bay_3_entrance, bay_4_entrance, entrance_lower_b],
-    'bay_3_to_lower_b': [bay_3_entrance, j1, bay_2_entrance, bay_1_entrance, entrance_lower_a],
+    'bay_3_to_lower_a': [bay_3_entrance, bay_4_entrance],
+    'bay_3_to_lower_b': [bay_3_entrance, j1, bay_2_entrance, bay_1_entrance],
 
-    'lower_a_to_bay4': [],
-    'lower_b_to_bay4': [],
-    'upper_a_to_bay4': [],
-    'upper_b_to_bay4': [],
+    'lower_a_to_bay4': [bay_1_entrance, bay_2_entrance, j1, bay_3_entrance, bay_4_entrance],
+    'lower_b_to_bay4': [bay_4_entrance],
+    'upper_a_to_bay4': [corner_before_upper_a, top_of_ramp, ramp, back_right_corner, exit_lower_b, bay_4_entrance],
+    'upper_b_to_bay4': [corner_before_upper_b, top_of_ramp, ramp, back_right_corner, exit_lower_b, bay_4_entrance],
 
     'bay_4_to_upper_a': [bay_4_entrance, entrance_lower_b, back_right_corner, ramp, top_of_ramp, corner_before_upper_a],
     'bay_4_to_upper_b': [bay_4_entrance, entrance_lower_b, back_right_corner, ramp, top_of_ramp, corner_before_upper_b],
-    'bay_4_to_lower_a': [bay_4_entrance, entrance_lower_b],
-    'bay_4_to_lower_b': [bay_4_entrance, bay_3_entrance, j1, bay_2_entrance, bay_1_entrance, entrance_lower_a],
+    'bay_4_to_lower_a': [bay_4_entrance],
+    'bay_4_to_lower_b': [bay_4_entrance, bay_3_entrance, j1, bay_2_entrance, bay_1_entrance],
 
-    'lower_a_to_bay1': [],
-    'lower_b_to_bay1': [],
-    'upper_a_to_bay1': [],
-    'upper_b_to_bay1': [],
+    'lower_a_to_bay1': [bay_1_entrance],
+    'lower_b_to_bay1': [bay_4_entrance, bay_3_entrance, j1, bay_2_entrance, bay_1_entrance],
+    'upper_a_to_bay1': [corner_before_upper_a, top_of_ramp, ramp, back_left_corner, exit_lower_a, bay_1_entrance],
+    'upper_b_to_bay1': [corner_before_upper_b, top_of_ramp, ramp, back_left_corner, exit_lower_a, bay_1_entrance],
 
     'bay_1_to_upper_a': [bay_1_entrance, entrance_lower_a, back_left_corner, ramp, top_of_ramp, corner_before_upper_a],
     'bay_1_to_upper_b': [bay_1_entrance, entrance_lower_a, back_left_corner, ramp, top_of_ramp, corner_before_upper_b],
-    'bay_1_to_lower_a': [bay_1_entrance, entrance_lower_a],
-    'bay_1_to_lower_b': [bay_1_entrance, bay_2_entrance, j1, bay_3_entrance, bay_4_entrance, entrance_lower_b],
+    'bay_1_to_lower_a': [bay_1_entrance],
+    'bay_1_to_lower_b': [bay_1_entrance, bay_2_entrance, j1, bay_3_entrance, bay_4_entrance],
 
-    'lower_a_to_bay2': [],
-    'lower_b_to_bay2': [],
-    'upper_a_to_bay2': [],
-    'upper_b_to_bay2': [],
+    'lower_a_to_bay2': [bay_1_entrance, bay_2_entrance],
+    'lower_b_to_bay2': [bay_4_entrance, bay_3_entrance, j1, bay_2_entrance],
+    'upper_a_to_bay2': [corner_before_upper_a, top_of_ramp, ramp, back_left_corner, exit_lower_a, bay_1_entrance, bay_2_entrance],
+    'upper_b_to_bay2': [corner_before_upper_a, top_of_ramp, ramp, back_left_corner, exit_lower_a, bay_1_entrance, bay_2_entrance],
 
     'bay_2_to_upper_a': [bay_2_entrance, bay_1_entrance, entrance_lower_a, back_left_corner, ramp, top_of_ramp, corner_before_upper_a],
     'bay_2_to_upper_b': [bay_2_entrance, bay_1_entrance, entrance_lower_a, back_left_corner, ramp, top_of_ramp, corner_before_upper_b],
-    'bay_2_to_lower_a': [bay_2_entrance, bay_1_entrance, entrance_lower_a],
-    'bay_2_to_lower_b': [bay_2_entrance, j1, bay_3_entrance, bay_4_entrance, entrance_lower_b],
+    'bay_2_to_lower_a': [bay_2_entrance, bay_1_entrance],
+    'bay_2_to_lower_b': [bay_2_entrance, j1, bay_3_entrance, bay_4_entrance],
 
-    'lower_a_to_start': [],
-    'lower_b_to_start': [],
-    'upper_a_to_start': [],
-    'upper_b_to_start': []
+    'lower_a_to_start': [bay_1_entrance, bay_2_entrance, j1, start],
+    'lower_b_to_start': [bay_4_entrance, bay_3_entrance, j1, start],
+    'upper_a_to_start': [corner_before_upper_a, top_of_ramp, ramp, back_left_corner, exit_lower_a, bay_1_entrance, bay_2_entrance, j1, start],
+    'upper_b_to_start': [corner_before_upper_b, top_of_ramp, ramp, back_right_corner, exit_lower_b, bay_4_entrance, bay_3_entrance, j1, start]
 }
