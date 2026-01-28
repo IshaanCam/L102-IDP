@@ -67,6 +67,7 @@ Dicts:
         (upper_a, start): right,
         (lower_b, start): left,
         (upper_b, start): left,
+        (start, start_after_line_following_test): right
     },
     bay_3_entrance: {
         (bay_3, lower_a): left, 
@@ -82,6 +83,7 @@ Dicts:
         (bay_1, lower_b): forward,
         (lower_b, start): forward,
         (upper_b, start): forward,
+        (start, start_after_line_following_test): forward
     },
     bay_4_entrance: {
         (bay_4, lower_a): left, 
@@ -101,12 +103,7 @@ Dicts:
         (bay_4, lower_b): forward,
         (bay_4, upper_b): forward,
         (bay_4, upper_a): forward
-    },
-    entrance_lower_b: {
-        (bay_3, upper_a): forward,
-        (bay_3, upper_b): forward,
-        (bay_4, upper_a): forward,
-        (bay_4, upper_b): forward,
+        (start, start_after_line_following_test): left
     },
     back_right_corner: {
         (bay_3, upper_a): left,
@@ -115,6 +112,7 @@ Dicts:
         (bay_4, upper_b): left,
         (upper_a, bay_4): right,
         (upper_b, bay_4): right,
+        (start, start_after_line_following_test): left
     },
     ramp: {
         (bay_3, upper_a): left,
@@ -131,6 +129,7 @@ Dicts:
         (bay_1, upper_b): right,
         (bay_2, upper_a): right,
         (bay_2, upper_b): right,
+        (start, start_after_line_following_test): forward
     },
     back_left_corner: {
         (upper_a, bay_1): left,
@@ -141,12 +140,14 @@ Dicts:
         (bay_1, upper_b): right,
         (bay_2, upper_a): right,
         (bay_2, upper_b): right,
+        (start, start_after_line_following_test): left
     },
     entrance_lower_b: {
         (bay_3, upper_a): forward,
         (bay_3, upper_b): forward,
         (bay_4, upper_a): forward,
         (bay_4, upper_b): forward,
+        (start, start_after_line_following_test): forward
     },
     exit_lower_b: {
         (upper_a: bay_4): forward,
@@ -175,7 +176,7 @@ Dicts:
         (bay_4, upper_b): left,
         (upper_b, bay_4): right,
         (upper_b, bay_2): right,
-        (upper_b, bay_1): right
+        (upper_b, bay_1): right,
     },
     corner_before_upper_a: {
         (bay_1, upper_a): right,
@@ -197,6 +198,7 @@ Dicts:
         (upper_b, bay_1): forward,
         (upper_a, bay_2): forward,
         (upper_b, bay_2): forward,
+        (start, start_after_line_following_test): forward
     }
     bay_1_entrance: {
         (bay_1, lower_a): forward,
@@ -216,6 +218,7 @@ Dicts:
         (lower_a, start): left,
         (upper_b, bay_1): forward,
         (upper_b, bay_2): left
+        (start, start_after_line_following_test): left
     },
     bay_2_entrance: {
         (bay_2, lower_a): left,
@@ -233,6 +236,7 @@ Dicts:
         (upper_b, bay_2): right,
         (lower_b, bay_2): left,
         (lower_b, bay_1): forward
+        (start, start_after_line_following_test): forward
     }
 }
 
@@ -285,6 +289,8 @@ to_and_fro = {
     'lower_b_to_start': [bay_4_entrance, bay_3_entrance, j1, start],
     'upper_a_to_start': [corner_before_upper_a, top_of_ramp, ramp, back_left_corner, exit_lower_a, bay_1_entrance, bay_2_entrance, j1, start],
     'upper_b_to_start': [corner_before_upper_b, top_of_ramp, ramp, back_right_corner, exit_lower_b, bay_4_entrance, bay_3_entrance, j1, start]
+
+    'start_to_line_following_test': [start, j1, bay_3_entrance, bay_4_entrance, entrance_lower_b, back_right_corner, ramp, back_left_corner, exit_lower_a, bay_1_entrance, bay_2_entrance, start],
 }
 
 def main(): {
