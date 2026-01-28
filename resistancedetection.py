@@ -2,8 +2,8 @@ from machine import ADC
 from utime import sleep
 
 voltage = ADC(26)
-val = voltage.read_u16()
 
 while True:
+    val = voltage.read_u16()
     print(val)
-    sleep(1)
+    sleep(0.1)
