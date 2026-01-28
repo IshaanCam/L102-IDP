@@ -1,14 +1,16 @@
 functions:
 - turn(direction: str) -> None:
-    right_motor.Forward()
-    left_motor.Forward()
-    read_junction_detector()
     right_motor.Stop()
     left_motor.Stop()
-    if direction == right:
-        left_motor.Forward()
-    else:
-        right_meter.Forward()
+    motor = right_motor
+    if direction == left:
+        motor = left_motor
+    while not junction_detected:
+        if direction == right:
+            motor.Forward()
+        else:
+            motor.Forward()
+    motor.Stop()
 
 - pick_up_box
     - 
@@ -47,7 +49,7 @@ Dicts:
     'bay_3',
     'bay_4',
     'bay_1',
-    'bay_2'
+    'bay_2',
 ]
 
 - path = {
@@ -283,4 +285,54 @@ to_and_fro = {
     'lower_b_to_start': [bay_4_entrance, bay_3_entrance, j1, start],
     'upper_a_to_start': [corner_before_upper_a, top_of_ramp, ramp, back_left_corner, exit_lower_a, bay_1_entrance, bay_2_entrance, j1, start],
     'upper_b_to_start': [corner_before_upper_b, top_of_ramp, ramp, back_right_corner, exit_lower_b, bay_4_entrance, bay_3_entrance, j1, start]
+}
+
+def main(): {
+    state = 'start'
+    start_position = 'start'
+    junction_detected = False
+    while not junction_detected:
+        right_motor.Forward(50)
+        left_motor.Forward(50)
+        sleep(0.05)
+    right_motor.Stop()
+    left_motor.Stop()
+    junction_detected = false
+    for bay in bays:
+        position = (start_position, bay)
+        for st in states:
+            if st == 'pre-pickup_move':
+                movement = to_and_fro[position]
+                for junction in movement:
+                    right_motor.Forward(50)
+                    left_motor.Forward(50)
+                    while not junction_detected:
+                        sleep(0.05)
+                    if path[junction][position] != forward:
+                        turn(path[junction][position])
+                    junction_detected = false
+            elif st == 'pick_up_box':
+                delivery_position = pick_up_box()
+            elif st == 'pre-delivery_move':
+                movement = to_and_fro[(bay, delivery_position)]
+                for junction in movement:
+                    right_motor.Forward(50)
+                    left_motor.Forward(50)
+                    while not junction_detected:
+                        sleep(0.05)
+                    if path[junction][position] != forward:
+                        turn(path[junction][position])
+                    junction_detected = false
+            else:
+                start_position = deliver_box()
+    position = (start_position, 'start')
+    movement = to_and_fro[position]
+    for junction in movement:
+        right_motor.Forward(50)
+        left_motor.Forward(50)
+        while not junction_detected:
+            sleep(0.05)
+        if path[junction][position] != forward:
+            turn(path[junction][position])
+        junction_detected = false
 }
