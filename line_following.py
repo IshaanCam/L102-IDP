@@ -81,9 +81,9 @@ def main():
     left_motor = Motor(dirPin = 4, PWMPin = 5)    
     right_motor = Motor(dirPin = 7, PWMPin = 6)
 
-    pid = PID(Kp=20, Ki=0, Kd=10, output_limits=(-50,50))
+    pid = PID(Kp=24, Ki=0, Kd=8, output_limits=(-60,60))
 
-    base_speed = 30   # This is a % of the max speed
+    base_speed = 60   # This is a % of the max speed
 
     while True:
 
