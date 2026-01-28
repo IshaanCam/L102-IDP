@@ -1,0 +1,6 @@
+def left_turn():
+    #Give a rough ~60º turn and then start testing for the white line
+
+    # we could define different turns depending on where we 
+    #are because the white lines are different but thats stupid
+    
