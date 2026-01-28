@@ -81,9 +81,9 @@ def main():
     left_motor = Motor(dirPin = 4, PWMPin = 5)    
     right_motor = Motor(dirPin = 7, PWMPin = 6)
 
-    pid = PID(Kp=100, Ki=0, Kd=0, output_limits=(-50,50))
+    pid = PID(Kp=20, Ki=0, Kd=10, output_limits=(-50,50))
 
-    base_speed = 50    # This is a % of the max speed
+    base_speed = 30   # This is a % of the max speed
 
     while True:
 
@@ -97,8 +97,10 @@ def main():
 
 
         e = -pos
+        
         prev_pos = pos  # storing in case of T junction detected
         correction = pid.update(e)
+        
 
         cmd_left = base_speed - correction
         cmd_right = base_speed + correction
@@ -107,11 +109,12 @@ def main():
         cmd_right = max(0, min(100, cmd_right))
 
         left_motor.Forward(cmd_left)
-        right_motor.Forward(cmd_right)
+        right_motor.Reverse(cmd_right)
 
         utime.sleep(0.01)
 
 main()
+
 
 
 
