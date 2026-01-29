@@ -1,0 +1,41 @@
+def find_empty_space():
+    from machine import Pin
+
+
+
+SIDE: variable
+lines_crossed = 0
+
+def motor_forward_until_junction_and_then_stop():
+    motor_forward()
+    while OUTSIDE_SIDE_line_sensor != 1 (either outside line sensor):
+            pass
+            sleep(0.01)
+    motor_Stop()
+
+def scan_distance(SIDE):
+    blah blah
+
+
+when function called:
+
+scan_distance(side)
+
+while True:
+    if distance on (SIDE) hand side < threshold value:
+        turn(SIDE)
+        motor_forward [a set amount of time]
+        drop(box)
+    else: 
+        motor_forward_until_junction_and_then_stop()
+        scan distance on SIDE_hand_side
+        break()
+    
+180º_turn
+motor_forward_until_junction_and_then_stop()
+Turn(OTHER_SIDE)
+
+while junctions_crossed > 0:
+    motor_forward_until_junction_and_then_stop
+    junctions_crossed -= 1
+    sleep(0.01)    
