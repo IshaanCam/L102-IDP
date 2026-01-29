@@ -97,7 +97,8 @@ junction_info = {
     },
     "exit_lower_b": {
         ("upper_a", "bay_4"): "forward",
-        ("upper_b", "bay_4"): "forward"
+        ("upper_b", "bay_4"): "forward",
+        ("start", "start"): "forward"
     },
     "top_of_ramp": {
         ("bay_1", "upper_a"): "right",
@@ -137,7 +138,8 @@ junction_info = {
         ("bay_1", "upper_a"): "forward",
         ("bay_1", "upper_b"): "forward",
         ("bay_2", "upper_a"): "forward",
-        ("bay_2", "upper_b"): "forward"
+        ("bay_2", "upper_b"): "forward",
+        ("start", "start"): "forward"
     },
     "exit_lower_a": {
         ("upper_a", "bay_1"): "forward",

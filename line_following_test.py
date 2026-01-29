@@ -15,3 +15,8 @@ def line_following_test(junction_detected, right_motor, left_motor):
         if path[junction][position] != "forward":
             turn(path[junction][position], right_motor, left_motor, junction_detected)
         junction_detected = False
+        if ((junction == 'entrance_lower_b') or (junction == 'exit_lower_a')):
+            for _ in range(5):
+                while not junction_detected:
+                    sleep(0.05)
+                junction_detected = False

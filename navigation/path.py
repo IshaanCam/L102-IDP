@@ -41,6 +41,6 @@ path = {
     ("upper_a", "start"): ["corner_before_upper_a", "top_of_ramp", "ramp", "back_left_corner", "exit_lower_a", "bay_1_entrance", "bay_2_entrance", "j1", "start"],
     ("upper_b", "start"): ["corner_before_upper_b", "top_of_ramp", "ramp", "back_right_corner", "exit_lower_b", "bay_4_entrance", "bay_3_entrance", "j1", "start"],
 
-    ("start", "start"): ["start", "j1", "bay_3_entrance", "bay_4_entrance", "entrance_lower_b", "back_right_corner", "ramp", "back_left_corner", "exit_lower_a", "bay_1_entrance", "bay_2_entrance", "start"]
+    ("start", "start"): ["start", "j1", "bay_3_entrance", "bay_4_entrance", "entrance_lower_b","exit_lower_b", "back_right_corner", "ramp", "back_left_corner", "exit_lower_a", "entrance_lower_a", "bay_1_entrance", "bay_2_entrance", "start"]
 }
 
