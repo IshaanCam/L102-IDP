@@ -70,13 +70,25 @@ def centroid_position(vals, weights):
         val_weight_sum += (1-vi) * wi
         val_sum += (1-vi)
     
-    if val_sum == 0:
-        return None, 0
+    if val_sum == 0: 
+        return None, 1      # T-junction
+    
+    if vals[0] and not vals[3]:
+        return None, 2      # Right turn
+    
+    if vals[3] and not vals[0]:
+        return None, 3      # Left turn
+    
+
     
     return val_weight_sum / val_sum, val_sum
 
+def decision_making(ind):
+    T_junction_turns = [0,1,0]
+    return
         
-def main():
+
+def line_following():
 
     left_motor = Motor(dirPin = 4, PWMPin = 5)    
     right_motor = Motor(dirPin = 7, PWMPin = 6)
@@ -91,9 +103,14 @@ def main():
 
         pos, sum = centroid_position(sensor_vals, WEIGHTS)
 
+        if sum == 4:
+            print("Position lost")
+            break
+
         if pos is None:
             pos = prev_pos
-            print("T Junction detected")
+            decision_making(pos, sum)
+            
 
 
         e = -pos
@@ -109,11 +126,9 @@ def main():
         cmd_right = max(0, min(100, cmd_right))
 
         left_motor.Forward(cmd_left)
-        right_motor.Reverse(cmd_right)
+        right_motor.Forward(cmd_right)
 
         utime.sleep(0.01)
-
-main()
 
 
 
