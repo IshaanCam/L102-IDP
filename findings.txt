@@ -1,0 +1,5 @@
+Findings from testing PID gains:
+
+- Ki is not necessary
+- Clamping of the output limits isn't a problem when we have a non-zero Ki
+- Since we want the line following algorithm to only run when we are on straight sections, we don't want gains such that it can turn - these will be hardcoded
