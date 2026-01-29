@@ -15,5 +15,3 @@ def led_button_test():
         led.value(button.value())
         sleep(0.1)
         print(button.value())
-
-
