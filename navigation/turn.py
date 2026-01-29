@@ -1,6 +1,6 @@
 from utime import sleep
 
-def turn(direction: str, right_motor, left_motor, junction_detected) -> None:
+def turn(direction: str, right_motor, left_motor) -> None:
     right_motor.Stop()
     left_motor.Stop()
     motor = right_motor

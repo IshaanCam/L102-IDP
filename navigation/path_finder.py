@@ -37,7 +37,7 @@ def path_finder(right_motor, left_motor, junction_detected):
                     while not junction_detected:
                         sleep(0.05)
                     if path[junction][position] != "forward":
-                        turn(path[junction][position], right_motor, left_motor, junction_detected)
+                        turn(path[junction][position], right_motor, left_motor)
                     junction_detected = False
             elif st == 'pick_up_box':
                 delivery_position = "Test"
@@ -51,7 +51,7 @@ def path_finder(right_motor, left_motor, junction_detected):
                     while not junction_detected:
                         sleep(0.05)
                     if path[junction][position] != "forward":
-                        turn(path[junction][position], right_motor, left_motor, junction_detected)
+                        turn(path[junction][position], right_motor, left_motor)
                     junction_detected = False
             else:
                 start_position = 'test'
@@ -63,5 +63,5 @@ def path_finder(right_motor, left_motor, junction_detected):
         while not junction_detected:
             sleep(0.05)
         if path[junction][position] != "forward":
-            turn(path[junction][position], right_motor, left_motor, junction_detected)
+            turn(path[junction][position], right_motor, left_motor)
         junction_detected = False
