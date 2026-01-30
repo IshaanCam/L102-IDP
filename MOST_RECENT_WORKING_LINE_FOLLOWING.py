@@ -50,7 +50,7 @@ class PID:
 
 WEIGHTS = [-2, -1, 1, 2] #  These will be used for finding our centroid (negative for left, positive for right)
 
-# ASSUMING WHITE IS HIGH
+# WHITE IS HIGH
 
 digital_pins = [10, 11, 12, 13]  #GPIO pin numbers
 digital = [Pin(i, Pin.IN) for i in digital_pins]
@@ -67,35 +67,23 @@ def centroid_position(vals, weights):
     val_sum = 0.0
 
     for vi, wi in zip(vals, weights):
-        val_weight_sum += (1-vi) * wi
-        val_sum += (1-vi)
+        val_weight_sum += vi * wi
+        val_sum += vi
     
-    if val_sum == 0: 
-        return None, 1      # T-junction
-    
-    if vals[0] and not vals[3]:
-        return None, 2      # Right turn
-    
-    if vals[3] and not vals[0]:
-        return None, 3      # Left turn
-    
-
+    if val_sum == 0:
+        return None, 0
     
     return val_weight_sum / val_sum, val_sum
 
-def decision_making(ind):
-    T_junction_turns = [0,1,0]
-    return
         
-
-def line_following():
+def main():
 
     left_motor = Motor(dirPin = 4, PWMPin = 5)    
     right_motor = Motor(dirPin = 7, PWMPin = 6)
 
-    pid = PID(Kp=24, Ki=0, Kd=8, output_limits=(-60,60))
+    pid = PID(Kp=30, Ki=0, Kd=20, output_limits=(-50,50))
 
-    base_speed = 60   # This is a % of the max speed
+    base_speed = 30   # This is a % of the max speed
 
     while True:
 
@@ -103,14 +91,9 @@ def line_following():
 
         pos, sum = centroid_position(sensor_vals, WEIGHTS)
 
-        if sum == 4:
-            print("Position lost")
-            break
-
         if pos is None:
             pos = prev_pos
-            decision_making(pos, sum)
-            
+            print("T Junction detected")
 
 
         e = -pos
@@ -130,6 +113,4 @@ def line_following():
 
         utime.sleep(0.01)
 
-
-
-
+main()
