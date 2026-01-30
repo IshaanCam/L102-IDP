@@ -1,6 +1,8 @@
 from machine import Pin, PWM
 import utime
-from controllers.motorController import Motor
+from motorController import Motor
+import config
+from sensors.line_tracking import LineTracker
 
 class PID:
     def __init__ (self, Kp, Ki, Kd, output_limits = (-100, 100)):
@@ -28,76 +30,19 @@ class PID:
         if update > self.max_out:
             return self.max_out
         return update
-    
 
-
-WEIGHTS = [-2, -1, 1, 2] #  These will be used for finding our centroid (negative for left, positive for right)
-
-# ASSUMING WHITE IS HIGH
-
-digital_pins = [10, 11, 12, 13]  #GPIO pin numbers
-digital = [Pin(i, Pin.IN) for i in digital_pins]
-
-def read_sensors(digital):
-    vals = []
-    for pin in digital:
-        vals.append(float(pin.value()))
-    return vals
-
-def centroid_position(vals, weights):
-
-    val_weight_sum = 0.0
-    val_sum = 0.0
-
-    for vi, wi in zip(vals, weights):
-        val_weight_sum += (1-vi) * wi
-        val_sum += (1-vi)
-    
-    if val_sum == 0:
-        return None, 0
-    
-    return val_weight_sum / val_sum, val_sum
-
-        
-def main():
-
-    left_motor = Motor(dirPin = 4, PWMPin = 5)    
-    right_motor = Motor(dirPin = 7, PWMPin = 6)
-
-    pid = PID(Kp=24, Ki=0, Kd=8, output_limits=(-60,60))
-
-    base_speed = 60   # This is a % of the max speed
-
-    while True:
-
-        sensor_vals = read_sensors(digital)
-
-        pos, sum = centroid_position(sensor_vals, WEIGHTS)
-
-        if pos is None:
-            pos = prev_pos
-            print("T Junction detected")
-
-
-        e = -pos
-        
-        prev_pos = pos  # storing in case of T junction detected
-        correction = pid.update(e)
-        
-
-        cmd_left = base_speed - correction
-        cmd_right = base_speed + correction
-
-        cmd_left = max(0, min(100, cmd_left))
-        cmd_right = max(0, min(100, cmd_right))
-
-        left_motor.Forward(cmd_left)
-        right_motor.Reverse(cmd_right)
-
-        utime.sleep(0.01)
-
-main()
-
-
-
-
+left_motor = config.LEFT_MOTOR 
+right_motor = config.RIGHT_MOTOR
+left_sensor = config.CENTER_LEFT_SENSOR
+right_sensor = config.CENTER_RIGHT_SENSOR
+def line_following(timer):
+    if config.LINE_FOLLOWING:
+        if left_sensor.read_value() != 1:
+            left_motor.Forward(config.BASE_SPEED + 5)
+            right_motor.Forward(config.BASE_SPEED - 5)
+        elif right_sensor.read_value() != 1:
+            right_motor.Forward(config.BASE_SPEED + 5)
+            left_motor.Forward(config.BASE_SPEED - 5)
+        utime.sleep(0.001)
+        left_motor.Forward(config.BASE_SPEED)
+        right_motor.Forward(config.BASE_SPEED)
