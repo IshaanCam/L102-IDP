@@ -3,13 +3,16 @@ import config
 import random as random
 
 def junction_detecter(timer):
-    # if ((left_sensor.read_value() == 1) or (right_sensor.read_value() == 1)):
-    #     junction_detected = True
+    if config.JUNCTION_ARMED:
+        if ((config.FAR_LEFT_SENSOR.read_value() == 1) or (config.FAR_RIGHT_SENSOR.read_value() == 1)):
+            config.JUNCTION_DETECTED = True
+            config.JUNCTION_ARMED = False
+    else: 
+        if ((config.FAR_LEFT_SENSOR.read_value() == 0) and (config.FAR_RIGHT_SENSOR.read_value() == 0)):
+            config.JUNCTION_ARMED = True
+    # rn = random.randint(1, 5)
+    # if rn == 1:
+    #     config.JUNCTION_DETECTED = True
     # else:
-    #     junction_detected = False
-    rn = random.randint(1, 5)
-    if rn == 1:
-        config.JUNCTION_DETECTED = True
-    else:
-        config.JUNCTION_DETECTED = False
-    print(f'{config.JUNCTION_DETECTED}, junction_detector')
+    #     config.JUNCTION_DETECTED = False
+    # print(f'{config.JUNCTION_DETECTED}, junction_detector')
