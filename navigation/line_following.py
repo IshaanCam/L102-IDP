@@ -1,20 +1,23 @@
-from machine import Pin, PWM
-import utime
-from motorController import Motor
+# from machine import Pin, PWM
+import time as utime
+from fakeStuff import FakeMotor as Motor, FakeLineSensor as LineTracker
+# from motorController import Motor
 import config
-from sensors.line_tracking import LineTracker
-
+# from sensors.line_tracking import LineTracker
 class PID:
     def __init__ (self, Kp, Ki, Kd, output_limits = (-100, 100)):
         self.Kp, self.Ki, self.Kd = Kp, Ki, Kd
         self.min_out, self.max_out = output_limits
         self.I = 0.0
         self.e_prev = 0
-        self.t_prev = utime.ticks_ms()
+        # self.t_prev = utime.ticks_ms()
+        self.t_prev = int(utime.time() * 1000)
     
     def update(self, e):
-        t = utime.ticks_ms()
-        dt = utime.ticks_diff(t, self.t_prev) / 1000.0   # dividing by 1000 to convert to seconds
+        # t = utime.ticks_ms()
+        t = int(utime.time() * 1000)
+        # dt = utime.ticks_diff(t, self.t_prev) / 1000.0   # dividing by 1000 to convert to seconds
+        dt = (t - self.t_prev) / 1000
         self.t_prev = t
         if dt <= 0:
             dt = 0.001  # protection from divide by 0 error
@@ -70,7 +73,7 @@ def line_following(
 
         if pos is None:
             pos = config.prev_pos
-            print("T Junction detected")
+            # print("T Junction detected")
 
 
         e = -pos
