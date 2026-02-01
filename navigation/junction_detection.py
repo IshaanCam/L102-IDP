@@ -10,7 +10,7 @@ def junction_detecter(timer):
             config.JUNCTION_DETECTED = True
             config.JUNCTION_ARMED = False
             config.LF = False
-            config.JUNCTION_TICKER = config.JUNCTION_COOLDOWN
+            # config.JUNCTION_TICKER = config.JUNCTION_COOLDOWN
             print("[JD] Junction detected")
     else: 
         if ((config.FAR_LEFT_SENSOR.read_value() == 0) and (config.FAR_RIGHT_SENSOR.read_value() == 0)):
