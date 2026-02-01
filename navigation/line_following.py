@@ -61,7 +61,6 @@ def line_following(
     None
     """
     base_speed = config.BASE_SPEED
-    pid = PID(Kp = config.pid_controls['Kp'], Ki = config.pid_controls['Ki'], Kd=config.pid_controls['Kd'], output_limits=(-50, 50))
 
     if config.LF:
 
@@ -77,7 +76,7 @@ def line_following(
         e = -pos
         
         config.prev_pos = pos  # storing in case of T junction detected
-        correction = pid.update(e)
+        correction = config.pid.update(e)
         
 
         cmd_left = base_speed - correction
@@ -88,6 +87,5 @@ def line_following(
 
         config.LEFT_MOTOR.Forward(cmd_left)
         config.RIGHT_MOTOR.Forward(cmd_right)
-
-        utime.sleep(0.01)
+        
     return 

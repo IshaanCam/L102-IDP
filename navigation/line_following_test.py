@@ -207,11 +207,13 @@ def turn(direction: str, right_motor: Motor, left_motor: Motor) -> None:
     left_motor.Stop()
     if direction == "left":
         right_motor.Forward(config.BASE_SPEED)
-        utime.sleep(1.2)
+        while not config.CENTER_LEFT_SENSOR:
+            utime.sleep(0.003)
         left_motor.Forward(config.BASE_SPEED)
     else:
         left_motor.Forward(config.BASE_SPEED)
-        utime.sleep(1.2)
+        while not config.CENTER_RIGHT_SENSOR:
+            utime.sleep(0.003)
         right_motor.Forward(config.BASE_SPEED)
     
 
@@ -226,24 +228,23 @@ def main():
     right_motor.Forward(base_speed)
 
     lf_timer = Timer(0, mode=Timer.PERIODIC, callback=line_following, freq=200)
-    jd_timer = Timer(0, mode=Timer.PERIODIC, callback=junction_detecter, freq=200)
+    jd_timer = Timer(1, mode=Timer.PERIODIC, callback=junction_detecter, freq=200)
 
     while not config.JUNCTION_DETECTED:
-        utime.sleep(0.005)
+        utime.sleep(0.003)
     config.JUNCTION_DETECTED = False
     movement = to_and_fro[position]
     for junction in movement:
         while not config.JUNCTION_DETECTED:
-            utime.sleep(0.005)
+            utime.sleep(0.003)
         if path[junction][position] != "forward":
-            config.LF = False
             turn(path[junction][position], right_motor, left_motor)
-            config.LF = True
+        config.LF = True
         config.JUNCTION_DETECTED = False
         if ((junction == 'entrance_lower_b') or (junction == 'exit_lower_a')):
             for _ in range(5):
                 while not config.JUNCTION_DETECTED:
-                    utime.sleep(0.005)
+                    utime.sleep(0.003)
                 config.JUNCTION_DETECTED = False
 
 main()

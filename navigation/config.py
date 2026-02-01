@@ -1,7 +1,8 @@
 from motorController import Motor
 from sensors.line_tracking import LineTracker
+from line_following import PID
 
-BASE_SPEED = 90
+BASE_SPEED = 30
 JUNCTION_DETECTED = False
 JUNCTION_ARMED = True
 LF = True
@@ -20,8 +21,8 @@ bays = [
     # 'bay_2',
 ]
 
-RIGHT_MOTOR = Motor()
-LEFT_MOTOR = Motor()
+RIGHT_MOTOR = Motor(7, 6)
+LEFT_MOTOR = Motor(4, 5)
 
 FAR_RIGHT_SENSOR = LineTracker(13)
 CENTER_RIGHT_SENSOR = LineTracker(12)
@@ -44,5 +45,7 @@ pid_controls = {
     "Ki" : 0,
     "Kd" : 20,
 }
+
+pid = PID(Kp = pid_controls['Kp'], Ki = pid_controls['Ki'], Kd=pid_controls['Kd'], output_limits=(-50, 50))
 
 WEIGHTS = [-2, -1, 1, 2] #  These will be used for finding our centroid (negative for left, positive for right)
