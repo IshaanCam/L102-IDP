@@ -67,8 +67,8 @@ def centroid_position(vals, weights):
     val_sum = 0.0
 
     for vi, wi in zip(vals, weights):
-        val_weight_sum += vi * wi
-        val_sum += vi
+        val_weight_sum += (1-vi) * wi
+        val_sum += (1-vi)
     
     if val_sum == 0:
         return None, 0
