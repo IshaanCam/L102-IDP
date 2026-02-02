@@ -1,14 +1,14 @@
 from motorController import Motor
 from sensors.line_tracking import LineTracker
 # from fakeStuff import FakeLineSensor, FakeMotor, FakeJunctionSensor
-from line_following import PID
+from PID import PID
 
 # Actual program
 
-BASE_SPEED = 30
+BASE_SPEED = 80
 JUNCTION_DETECTED = False
 JUNCTION_ARMED = True
-LF = True
+LF = False
 prev_pos = 0
 states = [
     'pre-pickup_move',
@@ -44,9 +44,9 @@ WEIGHTS = [
 ]
 
 pid_controls = {
-    "Kp" : 30,
+    "Kp" : 100,
     "Ki" : 0,
-    "Kd" : 20,
+    "Kd" : 80,
 }
 
 pid = PID(Kp = pid_controls['Kp'], Ki = pid_controls['Ki'], Kd=pid_controls['Kd'], output_limits=(-50, 50))

@@ -5,7 +5,7 @@ from line_following import line_following
 from junction_detection import junction_detecter
 from motorController import Motor
 
-to_and_fro = {("start", "start"): ["start", "j1", "bay_3_entrance", "bay_4_entrance", "entrance_lower_b","exit_lower_b", "back_right_corner", "ramp", "back_left_corner", "exit_lower_a", "entrance_lower_a", "bay_1_entrance", "bay_2_entrance", "start"]}
+to_and_fro = {("start", "start"): ["j1", "bay_3_entrance", "bay_4_entrance", "entrance_lower_b", "entrance_lower_b2", "entrance_lower_b3", "entrance_lower_b4", "entrance_lower_b5", "entrance_lower_b6", "exit_lower_b", "back_right_corner", "ramp", "back_left_corner", "exit_lower_a","entrance_lower_a6", "entrance_lower_a5", "entrance_lower_a4", "entrance_lower_a3", "entrance_lower_a2", "entrance_lower_a", "bay_1_entrance", "bay_2_entrance"]}
 path = {
     "start": {
         ("start", "bay_3"): "forward",
@@ -13,6 +13,7 @@ path = {
         ("lower_a", "start"): "forward",
         ("upper_b", "start"): "forward",
         ("upper_a", "start"): "forward",
+        ("start", "start"): "forward",
     },
     "j1": {
         ("bay_3", "lower_a"): "forward", 
@@ -109,6 +110,41 @@ path = {
         ("bay_4", "upper_b"): "forward",
         ("start", "start"): "forward"
     },
+    "entrance_lower_b2": {
+        ("bay_3", "upper_a"): "forward",
+        ("bay_3", "upper_b"): "forward",
+        ("bay_4", "upper_a"): "forward",
+        ("bay_4", "upper_b"): "forward",
+        ("start", "start"): "forward"
+    },
+    "entrance_lower_b3": {
+        ("bay_3", "upper_a"): "forward",
+        ("bay_3", "upper_b"): "forward",
+        ("bay_4", "upper_a"): "forward",
+        ("bay_4", "upper_b"): "forward",
+        ("start", "start"): "forward"
+    },
+    "entrance_lower_b4": {
+        ("bay_3", "upper_a"): "forward",
+        ("bay_3", "upper_b"): "forward",
+        ("bay_4", "upper_a"): "forward",
+        ("bay_4", "upper_b"): "forward",
+        ("start", "start"): "forward"
+    },
+    "entrance_lower_b5": {
+        ("bay_3", "upper_a"): "forward",
+        ("bay_3", "upper_b"): "forward",
+        ("bay_4", "upper_a"): "forward",
+        ("bay_4", "upper_b"): "forward",
+        ("start", "start"): "forward"
+    },
+    "entrance_lower_b6": {
+        ("bay_3", "upper_a"): "forward",
+        ("bay_3", "upper_b"): "forward",
+        ("bay_4", "upper_a"): "forward",
+        ("bay_4", "upper_b"): "forward",
+        ("start", "start"): "forward"
+    },
     "exit_lower_b": {
         ("upper_a", "bay_4"): "forward",
         ("upper_b", "bay_4"): "forward",
@@ -149,6 +185,41 @@ path = {
         ("upper_a", "bay_1"): "left"
     },
     "entrance_lower_a": {
+        ("bay_1", "upper_a"): "forward",
+        ("bay_1", "upper_b"): "forward",
+        ("bay_2", "upper_a"): "forward",
+        ("bay_2", "upper_b"): "forward",
+        ("start", "start"): "forward"
+    },
+    "entrance_lower_a2": {
+        ("bay_1", "upper_a"): "forward",
+        ("bay_1", "upper_b"): "forward",
+        ("bay_2", "upper_a"): "forward",
+        ("bay_2", "upper_b"): "forward",
+        ("start", "start"): "forward"
+    },
+    "entrance_lower_a3": {
+        ("bay_1", "upper_a"): "forward",
+        ("bay_1", "upper_b"): "forward",
+        ("bay_2", "upper_a"): "forward",
+        ("bay_2", "upper_b"): "forward",
+        ("start", "start"): "forward"
+    },
+    "entrance_lower_a4": {
+        ("bay_1", "upper_a"): "forward",
+        ("bay_1", "upper_b"): "forward",
+        ("bay_2", "upper_a"): "forward",
+        ("bay_2", "upper_b"): "forward",
+        ("start", "start"): "forward"
+    },
+    "entrance_lower_a5": {
+        ("bay_1", "upper_a"): "forward",
+        ("bay_1", "upper_b"): "forward",
+        ("bay_2", "upper_a"): "forward",
+        ("bay_2", "upper_b"): "forward",
+        ("start", "start"): "forward"
+    },
+    "entrance_lower_a6": {
         ("bay_1", "upper_a"): "forward",
         ("bay_1", "upper_b"): "forward",
         ("bay_2", "upper_a"): "forward",
@@ -203,22 +274,25 @@ path = {
 }
 
 def turn(direction: str, right_motor: Motor, left_motor: Motor) -> None:
+    utime.sleep(0.25)
     right_motor.Stop()
     left_motor.Stop()
     if direction == "left":
-        right_motor.Forward(config.BASE_SPEED)
-        while not config.CENTER_LEFT_SENSOR:
-            utime.sleep(0.003)
         left_motor.Forward(config.BASE_SPEED)
+        utime.sleep(1.2)
+        while not (config.CENTER_RIGHT_SENSOR.read_value()):
+            utime.sleep(0.003)
+        right_motor.Forward(config.BASE_SPEED)
     else:
-        left_motor.Forward(config.BASE_SPEED)
-        while not config.CENTER_RIGHT_SENSOR:
-            utime.sleep(0.003)
         right_motor.Forward(config.BASE_SPEED)
+        utime.sleep(1.2)
+        while not config.CENTER_LEFT_SENSOR.read_value():
+            utime.sleep(0.003)
+        left_motor.Forward(config.BASE_SPEED)
     
 
 def main():
-    position = ('start', 'start')
+    position = ("start", "start")
     
     left_motor = config.LEFT_MOTOR
     right_motor = config.RIGHT_MOTOR
@@ -226,25 +300,38 @@ def main():
 
     left_motor.Forward(base_speed)
     right_motor.Forward(base_speed)
+    print("START")
 
-    lf_timer = Timer(0, mode=Timer.PERIODIC, callback=line_following, freq=200)
-    jd_timer = Timer(1, mode=Timer.PERIODIC, callback=junction_detecter, freq=200)
+    Timer(mode=1, freq=200, callback=line_following)
+    Timer(mode=1, freq=200, callback=junction_detecter)
 
     while not config.JUNCTION_DETECTED:
         utime.sleep(0.003)
     config.JUNCTION_DETECTED = False
     movement = to_and_fro[position]
     for junction in movement:
+        print(junction)
         while not config.JUNCTION_DETECTED:
             utime.sleep(0.003)
+        config.LF = False
         if path[junction][position] != "forward":
+            print(path[junction][position])
             turn(path[junction][position], right_motor, left_motor)
+        else:
+            left_motor.Forward()
+            right_motor.Forward()
+            utime.sleep(0.4)
         config.LF = True
         config.JUNCTION_DETECTED = False
-        if ((junction == 'entrance_lower_b') or (junction == 'exit_lower_a')):
-            for _ in range(5):
-                while not config.JUNCTION_DETECTED:
-                    utime.sleep(0.003)
-                config.JUNCTION_DETECTED = False
+    while not config.JUNCTION_DETECTED:
+        utime.sleep(0.003)
+    config.LF = False
+    turn('right', right_motor, left_motor)
+    utime.sleep(1)
+    left_motor.Stop()
+    right_motor.Stop()
+    
 
 main()
+
+
