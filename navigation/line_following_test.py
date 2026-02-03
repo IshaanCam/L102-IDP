@@ -293,7 +293,10 @@ def turn(direction: str, right_motor: Motor, left_motor: Motor) -> None:
 
 def main():
     position = ("start", "start")
-    
+    button_pin = 0
+    button = Pin(button_pin, Pin.IN, Pin.PULL_DOWN)
+    while not button.value():
+        utime.sleep(0.003)
     left_motor = config.LEFT_MOTOR
     right_motor = config.RIGHT_MOTOR
     base_speed = config.BASE_SPEED
