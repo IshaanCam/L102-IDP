@@ -18,7 +18,7 @@ states = [
 ]
 
 bays = [
-    'bay_3',
+    ("bay_3", "lower_b"),
     # 'bay_4',
     # 'bay_1',
     # 'bay_2',
@@ -27,10 +27,10 @@ bays = [
 RIGHT_MOTOR = Motor(7, 6)
 LEFT_MOTOR = Motor(4, 5)
 
-FAR_RIGHT_SENSOR = LineTracker(13)
-CENTER_RIGHT_SENSOR = LineTracker(12)
-CENTER_LEFT_SENSOR = LineTracker(11)
-FAR_LEFT_SENSOR = LineTracker(10)
+FAR_RIGHT_SENSOR = LineTracker(28)
+CENTER_RIGHT_SENSOR = LineTracker(27)
+CENTER_LEFT_SENSOR = LineTracker(1)
+FAR_LEFT_SENSOR = LineTracker(2)
 
 LINE_SENSOR = [
     FAR_LEFT_SENSOR, 
