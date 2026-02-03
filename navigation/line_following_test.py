@@ -279,8 +279,8 @@ def turn(direction: str, right_motor: Motor, left_motor: Motor) -> None:
     left_motor.Stop()
     if direction == "left":
         left_motor.Forward(config.BASE_SPEED)
-        utime.sleep(1.2)
-        while not (config.CENTER_RIGHT_SENSOR.read_value()):
+        utime.sleep(0.8)
+        while not (config.CENTER_LEFT_SENSOR.read_value()):
             utime.sleep(0.003)
         right_motor.Forward(config.BASE_SPEED)
     else:
@@ -320,14 +320,18 @@ def main():
         else:
             left_motor.Forward()
             right_motor.Forward()
-            utime.sleep(0.4)
+            utime.sleep(0.2)
         config.LF = True
         config.JUNCTION_DETECTED = False
     while not config.JUNCTION_DETECTED:
         utime.sleep(0.003)
     config.LF = False
-    turn('right', right_motor, left_motor)
-    utime.sleep(1)
+    right_motor.Stop()
+    left_motor.Stop()
+    right_motor.Forward(config.BASE_SPEED)
+    utime.sleep(1.5)
+    left_motor.Forward(config.BASE_SPEED)
+    utime.sleep(0.5)
     left_motor.Stop()
     right_motor.Stop()
     
