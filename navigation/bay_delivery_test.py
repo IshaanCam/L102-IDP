@@ -307,9 +307,10 @@ def main():
 
     for (bay, delivery) in config.bays:
         for st in config.states:
-            if st == "pre-pick_move":
+            if st == "pre-pickup_move":
                 position = (starting_position, bay)
                 while not config.JUNCTION_DETECTED:
+                    print("WAITING FOR JUNCTION")
                     utime.sleep(0.003)
                 config.JUNCTION_DETECTED = False
                 movement = to_and_fro[position]
@@ -333,30 +334,6 @@ def main():
                 turn('left', right_motor, left_motor)
                 left_motor.Stop()
                 right_motor.Stop()
-            elif st == "pre-delivery_move":
-                position = (bay, delivery)
-                left_motor.Reverse()
-                right_motor.Reverse()
-                while not config.JUNCTION_DETECTED:
-                    utime.sleep(0.003)
-                config.JUNCTION_DETECTED = False
-                turn('left', right_motor, left_motor)
-                config.LF = True
-                movement = to_and_fro[position]
-                for junction in movement:
-                    while not config.JUNCTION_DETECTED:
-                        utime.sleep(0.003)
-                    config.LF = False
-                    if path[junction][position] != "forward":
-                        print(path[junction][position])
-                        turn(path[junction][position], right_motor, left_motor)
-                    else:
-                        left_motor.Forward()
-                        right_motor.Forward()
-                        utime.sleep(0.2)
-                    config.LF = True
-                    config.JUNCTION_DETECTED = False
-                starting_position = delivery
     while not config.JUNCTION_DETECTED:
         utime.sleep(0.003)
     config.LF = False
