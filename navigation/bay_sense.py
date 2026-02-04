@@ -16,11 +16,11 @@ def init_tof():
         utime.sleep(0.1)
     tof.start_measurement(calib_m=tof.eMODE_NO_CALIB, mode=tof.eDISTANCE) #Distance Mode
 
-def is_bay_empty():
+def is_bay_empty(side):
     """Returns True if distance is > Threshold (no box present)"""
     while not tof.is_data_ready():
         utime.sleep(0.01)
-    dist = tof.get_distance_mm()
+    dist = tof.get_distance_mm() 
     return dist > config.BAY_DISTANCE_THRESHOLD_MM
 
 def deliver_sequence(side):
