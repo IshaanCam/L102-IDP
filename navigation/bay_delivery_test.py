@@ -33,7 +33,7 @@ path = {
     "bay_3_entrance": {
         ("bay_3", "lower_a"): "left", 
         ("bay_4", "lower_a"): "forward", 
-        ("bay_3", "lower_b"): "left",
+        ("bay_3", "lower_b"): "right",
         ("bay_3", "upper_b"): "right",
         ("bay_3", "upper_a"): "right",
         ("lower_b", "bay_1"): "forward", 
@@ -148,6 +148,8 @@ path = {
     "exit_lower_b": {
         ("upper_a", "bay_4"): "forward",
         ("upper_b", "bay_4"): "forward",
+        ("bay_3", "upper_a"): "forward",
+        ("bay_4", "upper_a"): "forward",
         ("start", "start"): "forward"
     },
     "top_of_ramp": {
@@ -251,6 +253,8 @@ path = {
         ("lower_a", "start"): "left",
         ("upper_b", "bay_1"): "forward",
         ("upper_b", "bay_2"): "left",
+        ("lower_b", "bay_1"): "left",
+        ("bay_1", "lower_b"): "right",
         ("start", "start"): "left"
     },
     "bay_2_entrance": {
@@ -282,7 +286,7 @@ def turn(direction: str, right_motor: Motor, left_motor: Motor) -> None:
     if direction == "left":
         left_motor.Forward(config.BASE_SPEED)
         utime.sleep(0.8)
-        while not (config.CENTER_LEFT_SENSOR.read_value()):
+        while not (config.CENTER_RIGHT_SENSOR.read_value()):
             utime.sleep(0.003)
         right_motor.Forward(config.BASE_SPEED)
     else:
@@ -291,13 +295,32 @@ def turn(direction: str, right_motor: Motor, left_motor: Motor) -> None:
         while not (config.CENTER_LEFT_SENSOR.read_value() and config.CENTER_RIGHT_SENSOR.read_value()):
             utime.sleep(0.003)
         left_motor.Forward(config.BASE_SPEED)
+
+def turn_180(direction: str, right_motor: Motor, left_motor: Motor) -> None:
+    right_motor.Stop()
+    left_motor.Stop()
+    if direction == "left":
+        left_motor.Forward(config.BASE_SPEED)
+        right_motor.Reverse(config.BASE_SPEED)
+        utime.sleep(0.8)
+        while not (config.CENTER_RIGHT_SENSOR.read_value()):
+            utime.sleep(0.003)
+        right_motor.Forward(config.BASE_SPEED)
+    else:
+        right_motor.Forward(config.BASE_SPEED)
+        left_motor.Reverse(config.BASE_SPEED)
+        utime.sleep(1.6)
+        while not config.CENTER_LEFT_SENSOR.read_value():
+            utime.sleep(0.003)
+        left_motor.Forward(config.BASE_SPEED)
     
 
 def main():
     start_position = "start"
-    button_pin = 14
+    button_pin = 0
     button = Pin(button_pin, Pin.IN, Pin.PULL_DOWN)
     while not button.value():
+        print(button.value())
         utime.sleep(0.003)
     left_motor = config.LEFT_MOTOR
     right_motor = config.RIGHT_MOTOR
@@ -315,10 +338,12 @@ def main():
     config.JUNCTION_DETECTED = False
     for bay in config.bays:
         for st in config.states:
+            print(st)
             if st == "pre-pickup_move":
                 position = (start_position, bay)
                 movement = to_and_fro[position]
                 for junction in movement:
+                    print(junction)
                     while not config.JUNCTION_DETECTED:
                         utime.sleep(0.003)
                     config.LF = False
@@ -336,10 +361,16 @@ def main():
                 right_motor.Stop()
                 left_motor.Stop()
             elif (st == "pick_up_box"):
-                left_motor.Reverse(config.BASE_SPEED)
-                right_motor.Reverse(config.BASE_SPEED)
+                if bay == "bay_1":
+                    turn_180("left", right_motor, left_motor)
+                elif bay == "bay_2":
+                    turn_180("left", right_motor, left_motor)
+                elif bay == "bay_3":
+                    turn_180("right", right_motor, left_motor)
+                elif bay == "bay_4":
+                    turn_180("right", right_motor, left_motor)
             elif st == "pre-delivery_move":
-                position = (bay, "lower_b")
+                position = (bay, "upper_a")
                 movement = to_and_fro[position]
                 for junction in movement:
                     while not config.JUNCTION_DETECTED:
@@ -355,15 +386,25 @@ def main():
                     config.JUNCTION_DETECTED = False
                 while not config.JUNCTION_DETECTED:
                     utime.sleep(0.003)
+                config.LF = False
                 turn("left", right_motor, left_motor)
+                utime.sleep(0.5)
                 left_motor.Stop()
                 right_motor.Stop()
+                config.JUNCTION_DETECTED = False
                 start_position = "lower_b"
             elif st == "deliver_box":
-                left_motor.Reverse(config.BASE_SPEED)
-                right_motor.Reverse(config.BASE_SPEED)
+                turn_180("right", right_motor, left_motor)
                 while not config.JUNCTION_DETECTED:
                     utime.sleep(0.003)
-                turn("left", right_motor, left_motor)
+                turn("right", right_motor, left_motor)
+                config.LF = True
+                config.JUNCTION_DETECTED = False
 
 main()
+
+
+
+
+
+
