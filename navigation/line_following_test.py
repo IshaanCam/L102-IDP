@@ -274,6 +274,8 @@ path = {
 }
 
 def turn(direction: str, right_motor: Motor, left_motor: Motor) -> None:
+    left_motor.Forward()
+    right_motor.Forward()
     utime.sleep(0.25)
     right_motor.Stop()
     left_motor.Stop()
