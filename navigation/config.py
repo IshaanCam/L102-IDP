@@ -12,8 +12,8 @@ LF = False
 prev_pos = 0
 states = [
     'pre-pickup_move',
-    # 'pick_up_box',
-    # 'pre-delivery_move',
+    'pick_up_box',
+    'pre-delivery_move',
     # 'deliver_box'
 ]
 
