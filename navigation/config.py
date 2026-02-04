@@ -9,6 +9,7 @@ BASE_SPEED = 80
 JUNCTION_DETECTED = False
 JUNCTION_ARMED = True
 LF = False
+BAY_DISTANCE_THRESHOLD_MM = 200
 prev_pos = 0
 states = [
     'pre-pickup_move',

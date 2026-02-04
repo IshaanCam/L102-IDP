@@ -5,6 +5,7 @@ from path import path as to_and_fro
 from line_following import line_following
 from junction_detection import junction_detecter
 from motorController import Motor
+from bay_sense import deliver_sequence, init_tof, is_bay_empty
 
 path = {
     "start": {
@@ -360,10 +361,7 @@ def main():
                 right_motor.Stop()
                 start_position = "lower_b"
             elif st == "deliver_box":
-                left_motor.Reverse(config.BASE_SPEED)
-                right_motor.Reverse(config.BASE_SPEED)
-                while not config.JUNCTION_DETECTED:
-                    utime.sleep(0.003)
-                turn("left", right_motor, left_motor)
+                deliver_sequence("left")
+
 
 main()
