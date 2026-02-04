@@ -18,8 +18,8 @@ states = [
 ]
 
 bays = [
-    ("bay_3", "lower_b"),
-    # 'bay_4',
+    "bay_3",
+    "bay_4",
     # 'bay_1',
     # 'bay_2',
 ]

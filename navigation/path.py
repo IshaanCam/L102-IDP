@@ -1,5 +1,5 @@
 path = {
-    ("start", "bay_3"): ["start", "j1", "bay_3_entrance"],
+    ("start", "bay_3"): ["j1", "bay_3_entrance"],
 
     ("bay_3", "upper_a"): ["bay_3_entrance", "bay_4_entrance", "entrance_lower_b", "back_right_corner", "ramp", "top_of_ramp", "corner_before_upper_a"],
     ("bay_3", "upper_b"): ["bay_3_entrance", "bay_4_entrance", "entrance_lower_b", "back_right_corner", "ramp", "top_of_ramp", "corner_before_upper_b"],
