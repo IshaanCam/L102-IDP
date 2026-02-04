@@ -302,16 +302,16 @@ def turn_180(direction: str, right_motor: Motor, left_motor: Motor) -> None:
     if direction == "left":
         left_motor.Forward(config.BASE_SPEED)
         right_motor.Reverse(config.BASE_SPEED)
-        utime.sleep(0.8)
-        while not (config.CENTER_RIGHT_SENSOR.read_value()):
-            utime.sleep(0.003)
+        utime.sleep(1.6)
+        # while not (config.CENTER_RIGHT_SENSOR.read_value()):
+        #     utime.sleep(0.003)
         right_motor.Forward(config.BASE_SPEED)
     else:
         right_motor.Forward(config.BASE_SPEED)
         left_motor.Reverse(config.BASE_SPEED)
         utime.sleep(1.6)
-        while not config.CENTER_LEFT_SENSOR.read_value():
-            utime.sleep(0.003)
+        # while not config.CENTER_LEFT_SENSOR.read_value():
+        #     utime.sleep(0.003)
         left_motor.Forward(config.BASE_SPEED)
     
 
@@ -388,13 +388,18 @@ def main():
                     utime.sleep(0.003)
                 config.LF = False
                 turn("left", right_motor, left_motor)
-                utime.sleep(0.5)
+                utime.sleep(0.2)
                 left_motor.Stop()
                 right_motor.Stop()
                 config.JUNCTION_DETECTED = False
-                start_position = "lower_b"
+                start_position = "upper_a"
             elif st == "deliver_box":
                 turn_180("right", right_motor, left_motor)
+                left_motor.Reverse(config.BASE_SPEED)
+                right_motor.Reverse(config.BASE_SPEED)
+                utime.sleep(0.4)
+                left_motor.Forward(config.BASE_SPEED)
+                right_motor.Forward(config.BASE_SPEED)
                 while not config.JUNCTION_DETECTED:
                     utime.sleep(0.003)
                 turn("right", right_motor, left_motor)
@@ -402,6 +407,7 @@ def main():
                 config.JUNCTION_DETECTED = False
 
 main()
+
 
 
 
