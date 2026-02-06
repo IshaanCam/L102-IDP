@@ -363,5 +363,22 @@ def main():
             elif st == "deliver_box":
                 deliver_sequence("left")
 
+def bay_sense_testing():
+    button_pin = 14
+    button = Pin(button_pin, Pin.IN, Pin.PULL_DOWN)
+    while not button.value():
+        utime.sleep(0.003)
+    left_motor = config.LEFT_MOTOR
+    right_motor = config.RIGHT_MOTOR
+    base_speed = config.BASE_SPEED
+
+    left_motor.Forward(base_speed)
+    right_motor.Forward(base_speed)
+    print("START")
+
+    Timer(mode=1, freq=200, callback=line_following)
+    Timer(mode=1, freq=200, callback=junction_detecter)
+    
+    deliver_sequence("left")
 
 main()

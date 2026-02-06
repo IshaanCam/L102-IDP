@@ -4,14 +4,12 @@ from machine import Pin, I2C
 from libs.DFRobot_TMF8x01.DFRobot_TMF8x01 import DFRobot_TMF8701
 from navigation import turn
 
-#NEED TO IMPORT THE SIDE REALLY:
-
-
 # --- Setup TOF Sensor ---
-i2c_bus = I2C(id=0, sda=Pin(20), scl=Pin(21), freq=100000)
-tof = DFRobot_TMF8701(i2c_bus=i2c_bus)
+
 
 def init_tof():
+    i2c_bus = I2C(id=0, sda=Pin(20), scl=Pin(21), freq=100000)
+    tof = DFRobot_TMF8701(i2c_bus=i2c_bus)
     while tof.begin() != 0:
         utime.sleep(0.1)
     tof.start_measurement(calib_m=tof.eMODE_NO_CALIB, mode=tof.eDISTANCE) #Distance Mode
