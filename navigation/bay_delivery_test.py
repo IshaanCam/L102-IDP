@@ -368,17 +368,17 @@ def bay_sense_testing():
     button = Pin(button_pin, Pin.IN, Pin.PULL_DOWN)
     while not button.value():
         utime.sleep(0.003)
-    left_motor = config.LEFT_MOTOR
-    right_motor = config.RIGHT_MOTOR
-    base_speed = config.BASE_SPEED
-
-    left_motor.Forward(base_speed)
-    right_motor.Forward(base_speed)
-    print("START")
 
     Timer(mode=1, freq=200, callback=line_following)
     Timer(mode=1, freq=200, callback=junction_detecter)
-    
+    print("Starting Line Following until first junction")
+
+    config.LF = True
+    while config.JUNCTION_DETECTED == False:
+        utime.sleep(0.01)
+    config.LF = False
+    print("Junction detected, starting Left facing deliver sequence")
+
     deliver_sequence("left")
 
-main()
+bay_sense_testing()
