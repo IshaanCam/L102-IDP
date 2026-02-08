@@ -1,5 +1,3 @@
-from machine import Pin, PWM
-import utime
 # from fakeStuff import FakeMotor as Motor, FakeLineSensor as LineTracker
 from controllers.motorController import Motor
 import utility.config as config

@@ -2,8 +2,7 @@ import utility.config as config
 import utime
 from machine import Pin, I2C
 from libs.DFRobot_TMF8x01.DFRobot_TMF8x01 import DFRobot_TMF8701
-from navigation import turn
-from turn import turn
+from pico_upload.navigation.turn import turn
 
 #NEED TO IMPORT THE SIDE REALLY:
 
@@ -13,13 +12,11 @@ i2c_bus = I2C(id=0, sda=Pin(6), scl=Pin(7), freq=100000)
 tof = DFRobot_TMF8701(i2c_bus=i2c_bus)
 
 def init_tof():
-    i2c_bus = I2C(id=0, sda=Pin(20), scl=Pin(21), freq=100000)
-    tof = DFRobot_TMF8701(i2c_bus=i2c_bus)
     while tof.begin() != 0:
         utime.sleep(0.1)
     tof.start_measurement(calib_m=tof.eMODE_NO_CALIB, mode=tof.eDISTANCE) #Distance Mode
 
-def is_bay_empty(side):
+def is_bay_empty(side="left"):
     """Returns True if distance is > Threshold (no box present)"""
     while not tof.is_data_ready():
         utime.sleep(0.01)
