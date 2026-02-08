@@ -1,5 +1,5 @@
 # from sensors.line_tracking import LineTracker
-import config
+import utility.config as config
 
 def junction_detecter(timer):
     # if config.JUNCTION_TICKER > 0:

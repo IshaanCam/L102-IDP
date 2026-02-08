@@ -1,11 +1,11 @@
 from machine import Pin, PWM, Timer
 import utime
-import config
-from path import path as to_and_fro
-from line_following import line_following
-from junction_detection import junction_detecter
-from motorController import Motor
-from bay_sense import deliver_sequence, init_tof, is_bay_empty
+import pico_upload.utility.config as config
+from pico_upload.utility.path import path as to_and_fro
+from pico_upload.navigation.line_following import line_following
+from pico_upload.navigation.junction_detection import junction_detecter
+from pico_upload.navigation.bay_sense import deliver_sequence
+from pico_upload.navigation.turn import turn
 
 path = {
     "start": {
@@ -274,25 +274,6 @@ path = {
     }
 }
 
-def turn(direction: str, right_motor: Motor, left_motor: Motor) -> None:
-    left_motor.Forward()
-    right_motor.Forward()
-    utime.sleep(0.25)
-    right_motor.Stop()
-    left_motor.Stop()
-    if direction == "left":
-        left_motor.Forward(config.BASE_SPEED)
-        utime.sleep(0.8)
-        while not (config.CENTER_LEFT_SENSOR.read_value()):
-            utime.sleep(0.003)
-        right_motor.Forward(config.BASE_SPEED)
-    else:
-        right_motor.Forward(config.BASE_SPEED)
-        utime.sleep(1.2)
-        while not (config.CENTER_LEFT_SENSOR.read_value() and config.CENTER_RIGHT_SENSOR.read_value()):
-            utime.sleep(0.003)
-        left_motor.Forward(config.BASE_SPEED)
-    
 
 def main():
     start_position = "start"

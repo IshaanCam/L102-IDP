@@ -1,11 +1,16 @@
-import config
+import utility.config as config
 import utime
 from machine import Pin, I2C
 from libs.DFRobot_TMF8x01.DFRobot_TMF8x01 import DFRobot_TMF8701
 from navigation import turn
+from turn import turn
+
+#NEED TO IMPORT THE SIDE REALLY:
 
 # --- Setup TOF Sensor ---
 
+i2c_bus = I2C(id=0, sda=Pin(6), scl=Pin(7), freq=100000)
+tof = DFRobot_TMF8701(i2c_bus=i2c_bus)
 
 def init_tof():
     i2c_bus = I2C(id=0, sda=Pin(20), scl=Pin(21), freq=100000)
@@ -47,8 +52,7 @@ def deliver_sequence(side):
             config.RIGHT_MOTOR.Reverse(config.BASE_SPEED)
             while not config.JUNCTION_DETECTED:
                 utime.sleep(0.003)
-            config.LEFT_MOTOR.Stop()
-            config.RIGHT_MOTOR.Stop()
+            config.JUNCTION_DETECTED = False
                         
             turn(side, config.RIGHT_MOTOR, config.LEFT_MOTOR) 
 
@@ -60,6 +64,7 @@ def deliver_sequence(side):
                 config.LF = True
                 while not config.JUNCTION_DETECTED:
                     utime.sleep(0.003)
+                config.JUNCTION_DETECTED = False
                 config.LF = False
                 j_crossed -= 1
             
@@ -74,5 +79,6 @@ def deliver_sequence(side):
             utime.sleep(0.2)
             config.LF = True
             while not config.JUNCTION_DETECTED:
-                        utime.sleep(0.003)
+                utime.sleep(0.003)
             config.LF = False
+            config.JUNCTION_DETECTED = False

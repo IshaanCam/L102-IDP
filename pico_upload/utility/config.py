@@ -1,7 +1,7 @@
-from motorController import Motor
+from controllers.motorController import Motor
 from sensors.line_tracking import LineTracker
 # from fakeStuff import FakeLineSensor, FakeMotor, FakeJunctionSensor
-from PID import PID
+from navigation.PID import PID
 
 # Actual program
 
