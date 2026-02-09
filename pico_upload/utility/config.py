@@ -1,4 +1,5 @@
 from controllers.motorController import Motor
+from controllers.servoController import Servo
 from sensors.line_tracking import LineTracker
 # from fakeStuff import FakeLineSensor, FakeMotor, FakeJunctionSensor
 from navigation.PID import PID
@@ -27,6 +28,9 @@ bays = [
 
 RIGHT_MOTOR = Motor(7, 6)
 LEFT_MOTOR = Motor(4, 5)
+
+SERVO1 = Servo(15)
+SERVO2 = Servo(13)
 
 FAR_RIGHT_SENSOR = LineTracker(28)
 CENTER_RIGHT_SENSOR = LineTracker(27)
