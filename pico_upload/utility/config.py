@@ -5,22 +5,22 @@ from navigation.PID import PID
 
 # Actual program
 
-BASE_SPEED = 80
+BASE_SPEED = 95
 JUNCTION_DETECTED = False
 JUNCTION_ARMED = True
 LF = False
-BAY_DISTANCE_THRESHOLD_MM = 200
+BAY_DISTANCE_THRESHOLD_MM = 260
 prev_pos = 0
 states = [
     'pre-pickup_move',
     'pick_up_box',
     'pre-delivery_move',
-    # 'deliver_box'
+    'deliver_box'
 ]
 
 bays = [
     "bay_3",
-    "bay_4",
+    #"bay_4",
     # 'bay_1',
     # 'bay_2',
 ]
@@ -48,9 +48,9 @@ WEIGHTS = [
 ]
 
 pid_controls = {
-    "Kp" : 100,
+    "Kp" : 10,
     "Ki" : 0,
-    "Kd" : 80,
+    "Kd" : 15,
 }
 
 pid = PID(Kp = pid_controls['Kp'], Ki = pid_controls['Ki'], Kd=pid_controls['Kd'], output_limits=(-50, 50))
@@ -135,3 +135,4 @@ WEIGHTS = [-2, -1, 1, 2] #  These will be used for finding our centroid (negativ
 # JUNCTION_ARMED = True
 # JUNCTION_COOLDOWN = 5
 # JUNCTION_TICKER = 0
+
