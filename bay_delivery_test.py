@@ -5,7 +5,7 @@ from pico_upload.utility.path import path as to_and_fro
 from pico_upload.navigation.line_following import line_following
 from pico_upload.navigation.junction_detection import junction_detecter
 from pico_upload.navigation.bay_sense import deliver_sequence
-from pico_upload.navigation.turn import turn
+from pico_upload.navigation.turn import turn, turn_180
 
 path = {
     "start": {
@@ -34,7 +34,7 @@ path = {
     "bay_3_entrance": {
         ("bay_3", "lower_a"): "left", 
         ("bay_4", "lower_a"): "forward", 
-        ("bay_3", "lower_b"): "left",
+        ("bay_3", "lower_b"): "right",
         ("bay_3", "upper_b"): "right",
         ("bay_3", "upper_a"): "right",
         ("lower_b", "bay_1"): "forward", 
@@ -149,6 +149,8 @@ path = {
     "exit_lower_b": {
         ("upper_a", "bay_4"): "forward",
         ("upper_b", "bay_4"): "forward",
+        ("bay_3", "upper_a"): "forward",
+        ("bay_4", "upper_a"): "forward",
         ("start", "start"): "forward"
     },
     "top_of_ramp": {
@@ -252,6 +254,8 @@ path = {
         ("lower_a", "start"): "left",
         ("upper_b", "bay_1"): "forward",
         ("upper_b", "bay_2"): "left",
+        ("lower_b", "bay_1"): "left",
+        ("bay_1", "lower_b"): "right",
         ("start", "start"): "left"
     },
     "bay_2_entrance": {
@@ -318,8 +322,14 @@ def main():
                 right_motor.Stop()
                 left_motor.Stop()
             elif (st == "pick_up_box"):
-                left_motor.Reverse(config.BASE_SPEED)
-                right_motor.Reverse(config.BASE_SPEED)
+                if bay == "bay_1":
+                    turn_180("left", right_motor, left_motor)
+                elif bay == "bay_2":
+                    turn_180("left", right_motor, left_motor)
+                elif bay == "bay_3":
+                    turn_180("right", right_motor, left_motor)
+                elif bay == "bay_4":
+                    turn_180("right", right_motor, left_motor)
             elif st == "pre-delivery_move":
                 position = (bay, "lower_b")
                 movement = to_and_fro[position]
@@ -337,12 +347,21 @@ def main():
                     config.JUNCTION_DETECTED = False
                 while not config.JUNCTION_DETECTED:
                     utime.sleep(0.003)
-                turn("left", right_motor, left_motor)
+                config.JUNCTION_DETECTED = False
                 left_motor.Stop()
                 right_motor.Stop()
                 start_position = "lower_b"
             elif st == "deliver_box":
-                deliver_sequence("left")
+                #deliver_sequence("left")
+                config.LF = False
+                turn("left", right_motor, left_motor)
+                left_motor.Reverse(config.BASE_SPEED)
+                right_motor.Reverse(config.BASE_SPEED)
+                while not config.JUNCTION_DETECTED:
+                    utime.sleep(0.003)
+                config.JUNCTION_DETECTED = False
+                turn("left", right_motor, left_motor)
+                config.LF = True
 
 def bay_sense_testing():
     button_pin = 14
