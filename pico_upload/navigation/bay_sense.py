@@ -7,13 +7,15 @@ from libs.VL53L0X.VL53L0X import VL53L0X
 
 #NEED TO IMPORT THE SIDE REALLY:
 
-# --- Setup TOF Sensor ---
+# --- Setup TOF Sensors ---
 
 i2c_bus_tof = I2C(id=1, sda=Pin(10), scl=Pin(11), freq=100000)
 tof = DFRobot_TMF8701(i2c_bus=i2c_bus_tof)
 
-i2c_bus_vl53 = I2C(id=1, sda=Pin(18), scl=Pin(19))
+i2c_bus_vl53 = I2C(id=0, sda=Pin(16), scl=Pin(17))
 vl53l0 = VL53L0X(i2c_bus_vl53)
+
+#   -------------------------------------
 
 def init_tof(side):
     if side == 'left':
@@ -22,7 +24,7 @@ def init_tof(side):
             utime.sleep(0.1)
         tof.start_measurement(calib_m=tof.eMODE_NO_CALIB, mode=tof.eDISTANCE) #Distance Mode
 
-    else:
+    elif side == "right":
          
         vl53l0.set_Vcsel_pulse_period(vl53l0.vcsel_period_type[0], 18)
         vl53l0.set_Vcsel_pulse_period(vl53l0.vcsel_period_type[1], 14)
@@ -37,12 +39,12 @@ def is_bay_empty(side):
             utime.sleep(0.01)
         dist = tof.get_distance_mm()
         print(dist)
-        return dist > config.BAY_DISTANCE_THRESHOLD_MM
+        return dist > config.BAY_DISTANCE_THRESHOLD_MM and dist < 1000
     
     else:
         dist = vl53l0.read()
         print(dist)
-        return dist > config.BAY_DISTANCE_THRESHOLD_MM
+        return dist > config.BAY_DISTANCE_THRESHOLD_MM and dist < 1000
 
     
 
@@ -52,7 +54,7 @@ def deliver_sequence(side):
 
     while True:
     # We are currently at a junction (stopped)
-        if is_bay_empty():
+        if is_bay_empty(side):
             print("Space empty")
             turn(side, config.RIGHT_MOTOR, config.LEFT_MOTOR)
 
