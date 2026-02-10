@@ -7,12 +7,18 @@ from navigation import turn
 # --- Setup TOF Sensor ---
 
 
-def init_tof():
-    i2c_bus = I2C(id=0, sda=Pin(20), scl=Pin(21), freq=100000)
-    tof = DFRobot_TMF8701(i2c_bus=i2c_bus)
-    while tof.begin() != 0:
-        utime.sleep(0.1)
-    tof.start_measurement(calib_m=tof.eMODE_NO_CALIB, mode=tof.eDISTANCE) #Distance Mode
+def init_tof(side):
+    if side == 'left':
+        i2c_bus = I2C(id=0, sda=Pin(20), scl=Pin(21), freq=100000)
+        i2c_bus = I2C(id=1, sda=Pin(6), scl=Pin(7), freq=100000)
+        tof = DFRobot_TMF8701(i2c_bus=i2c_bus)
+        while tof.begin() != 0:
+            utime.sleep(0.1)
+        tof.start_measurement(calib_m=tof.eMODE_NO_CALIB, mode=tof.eDISTANCE) #Distance Mode
+
+    else:
+         
+    
 
 def is_bay_empty(side):
     """Returns True if distance is > Threshold (no box present)"""
@@ -22,7 +28,7 @@ def is_bay_empty(side):
     return dist > config.BAY_DISTANCE_THRESHOLD_MM
 
 def deliver_sequence(side):
-    init_tof()
+    init_tof(side)
     j_crossed = 0
 
     while True:
