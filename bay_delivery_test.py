@@ -380,8 +380,8 @@ def bay_sense_testing():
     while config.JUNCTION_DETECTED == False:
         utime.sleep(0.01)
     config.LF = False
-    print("Junction detected, starting Left facing deliver sequence")
+    print("Junction detected, starting right facing deliver sequence")
 
-    deliver_sequence("left")
+    deliver_sequence("right")
 
 bay_sense_testing()
