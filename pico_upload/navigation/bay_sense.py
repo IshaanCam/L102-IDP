@@ -8,9 +8,6 @@ from navigation.turn import turn
 
 # --- Setup TOF Sensor ---
 
-i2c_bus = I2C(id=1, sda=Pin(10), scl=Pin(11), freq=100000)
-tof = DFRobot_TMF8701(i2c_bus=i2c_bus)
-
 def init_tof(side):
     if side == 'left':
         i2c_bus = I2C(id=0, sda=Pin(20), scl=Pin(21), freq=100000)
