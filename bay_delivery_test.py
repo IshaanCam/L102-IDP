@@ -352,7 +352,10 @@ def main():
                 right_motor.Stop()
                 start_position = "lower_b"
             elif st == "deliver_box":
-                #deliver_sequence("left")
+                if start_position == "lower_b" or "upper_a":
+                    deliver_sequence("left")
+                elif start_position == "lower_a" or "upper_b":
+                    deliver_sequence("right")
                 config.LF = False
                 turn("left", right_motor, left_motor)
                 left_motor.Reverse(config.BASE_SPEED)

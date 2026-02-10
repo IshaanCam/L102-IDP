@@ -3,31 +3,48 @@ import utime
 from machine import Pin, I2C
 from libs.DFRobot_TMF8x01.DFRobot_TMF8x01 import DFRobot_TMF8701
 from navigation.turn import turn
+from libs.VL53L0X.VL53L0X import VL53L0X
 
 #NEED TO IMPORT THE SIDE REALLY:
 
 # --- Setup TOF Sensor ---
 
+i2c_bus_tof = I2C(id=1, sda=Pin(10), scl=Pin(11), freq=100000)
+tof = DFRobot_TMF8701(i2c_bus=i2c_bus_tof)
+
+i2c_bus_vl53 = I2C(id=1, sda=Pin(18), scl=Pin(19))
+vl53l0 = VL53L0X(i2c_bus_vl53)
+
 def init_tof(side):
     if side == 'left':
-        i2c_bus = I2C(id=0, sda=Pin(20), scl=Pin(21), freq=100000)
-        i2c_bus = I2C(id=1, sda=Pin(6), scl=Pin(7), freq=100000)
-        tof = DFRobot_TMF8701(i2c_bus=i2c_bus)
+        
         while tof.begin() != 0:
             utime.sleep(0.1)
         tof.start_measurement(calib_m=tof.eMODE_NO_CALIB, mode=tof.eDISTANCE) #Distance Mode
 
     else:
          
+        vl53l0.set_Vcsel_pulse_period(vl53l0.vcsel_period_type[0], 18)
+        vl53l0.set_Vcsel_pulse_period(vl53l0.vcsel_period_type[1], 14)
+
+        vl53l0.start()
     
 
 def is_bay_empty(side):
     """Returns True if distance is > Threshold (no box present)"""
-    while not tof.is_data_ready():
-        utime.sleep(0.01)
-    dist = tof.get_distance_mm()
-    print(dist)
-    return dist > config.BAY_DISTANCE_THRESHOLD_MM
+    if side == 'left':
+        while not tof.is_data_ready():
+            utime.sleep(0.01)
+        dist = tof.get_distance_mm()
+        print(dist)
+        return dist > config.BAY_DISTANCE_THRESHOLD_MM
+    
+    else:
+        dist = vl53l0.read()
+        print(dist)
+        return dist > config.BAY_DISTANCE_THRESHOLD_MM
+
+    
 
 def deliver_sequence(side):
     init_tof(side)
