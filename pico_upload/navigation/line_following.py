@@ -1,8 +1,6 @@
-from machine import Pin, PWM
-import utime
 # from fakeStuff import FakeMotor as Motor, FakeLineSensor as LineTracker
-from motorController import Motor
-import config
+from controllers.motorController import Motor
+import utility.config as config
 from sensors.line_tracking import LineTracker
 
 # WHITE IS HIGH
@@ -13,8 +11,8 @@ def centroid_position(vals, weights):
     val_sum = 0.0
 
     for vi, wi in zip(vals, weights):
-        val_weight_sum += (1-vi) * wi
-        val_sum += (1-vi)
+        val_weight_sum += (vi) * wi
+        val_sum += (vi)
     
     if val_sum == 0:
         return None, 0
@@ -63,3 +61,4 @@ def line_following(
         config.RIGHT_MOTOR.Forward(cmd_right)
         
     return 
+

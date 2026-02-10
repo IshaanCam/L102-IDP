@@ -1,11 +1,15 @@
-import config
+import utility.config as config
 import utime
 from machine import Pin, I2C
 from libs.DFRobot_TMF8x01.DFRobot_TMF8x01 import DFRobot_TMF8701
-from navigation import turn
+from navigation.turn import turn
+
+#NEED TO IMPORT THE SIDE REALLY:
 
 # --- Setup TOF Sensor ---
 
+i2c_bus = I2C(id=1, sda=Pin(10), scl=Pin(11), freq=100000)
+tof = DFRobot_TMF8701(i2c_bus=i2c_bus)
 
 def init_tof(side):
     if side == 'left':
@@ -24,7 +28,8 @@ def is_bay_empty(side):
     """Returns True if distance is > Threshold (no box present)"""
     while not tof.is_data_ready():
         utime.sleep(0.01)
-    dist = tof.get_distance_mm() 
+    dist = tof.get_distance_mm()
+    print(dist)
     return dist > config.BAY_DISTANCE_THRESHOLD_MM
 
 def deliver_sequence(side):
@@ -37,9 +42,9 @@ def deliver_sequence(side):
             print("Space empty")
             turn(side, config.RIGHT_MOTOR, config.LEFT_MOTOR)
 
-            config.LEFT_MOTOR.Forward(config.BASE_SPEED)
-            config.RIGHT_MOTOR.Forward(config.BASE_SPEED)
-            utime.sleep(1.0)
+            #config.LEFT_MOTOR.Forward(config.BASE_SPEED)
+            #config.RIGHT_MOTOR.Forward(config.BASE_SPEED)
+            #utime.sleep(0)
 
             config.LEFT_MOTOR.Stop()
             config.RIGHT_MOTOR.Stop()
@@ -53,8 +58,7 @@ def deliver_sequence(side):
             config.RIGHT_MOTOR.Reverse(config.BASE_SPEED)
             while not config.JUNCTION_DETECTED:
                 utime.sleep(0.003)
-            config.LEFT_MOTOR.Stop()
-            config.RIGHT_MOTOR.Stop()
+            config.JUNCTION_DETECTED = False
                         
             turn(side, config.RIGHT_MOTOR, config.LEFT_MOTOR) 
 
@@ -66,19 +70,24 @@ def deliver_sequence(side):
                 config.LF = True
                 while not config.JUNCTION_DETECTED:
                     utime.sleep(0.003)
+                config.JUNCTION_DETECTED = False
                 config.LF = False
                 j_crossed -= 1
             
             print("Back to original position in reverse orientation")
             break
 
-        else:
+        else:  
             j_crossed += 1
             print("Bay occupied, moving to next junction...")
-            config.LEFT_MOTOR.Forward(config.BASE_SPEED)
-            config.RIGHT_MOTOR.Forward(config.BASE_SPEED)
+            config.LEFT_MOTOR.Forward(60)
+            config.RIGHT_MOTOR.Forward(60)
             utime.sleep(0.2)
             config.LF = True
             while not config.JUNCTION_DETECTED:
-                        utime.sleep(0.003)
+                utime.sleep(0.003)
             config.LF = False
+            config.JUNCTION_DETECTED = False
+            config.LEFT_MOTOR.Stop()
+            config.RIGHT_MOTOR.Stop()
+            utime.sleep(1)

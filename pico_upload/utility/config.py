@@ -1,32 +1,36 @@
-from motorController import Motor
+from controllers.motorController import Motor
+from controllers.servoController import Servo
 from sensors.line_tracking import LineTracker
 # from fakeStuff import FakeLineSensor, FakeMotor, FakeJunctionSensor
-from PID import PID
+from navigation.PID import PID
 
 # Actual program
 
-BASE_SPEED = 80
+BASE_SPEED = 95
 JUNCTION_DETECTED = False
 JUNCTION_ARMED = True
 LF = False
-BAY_DISTANCE_THRESHOLD_MM = 200
+BAY_DISTANCE_THRESHOLD_MM = 260
 prev_pos = 0
 states = [
     'pre-pickup_move',
     'pick_up_box',
     'pre-delivery_move',
-    # 'deliver_box'
+    'deliver_box'
 ]
 
 bays = [
     "bay_3",
-    "bay_4",
+    #"bay_4",
     # 'bay_1',
     # 'bay_2',
 ]
 
 RIGHT_MOTOR = Motor(7, 6)
 LEFT_MOTOR = Motor(4, 5)
+
+SERVO1 = Servo(15)
+SERVO2 = Servo(13)
 
 FAR_RIGHT_SENSOR = LineTracker(28)
 CENTER_RIGHT_SENSOR = LineTracker(27)
@@ -48,9 +52,9 @@ WEIGHTS = [
 ]
 
 pid_controls = {
-    "Kp" : 100,
+    "Kp" : 10,
     "Ki" : 0,
-    "Kd" : 80,
+    "Kd" : 15,
 }
 
 pid = PID(Kp = pid_controls['Kp'], Ki = pid_controls['Ki'], Kd=pid_controls['Kd'], output_limits=(-50, 50))
@@ -135,3 +139,4 @@ WEIGHTS = [-2, -1, 1, 2] #  These will be used for finding our centroid (negativ
 # JUNCTION_ARMED = True
 # JUNCTION_COOLDOWN = 5
 # JUNCTION_TICKER = 0
+

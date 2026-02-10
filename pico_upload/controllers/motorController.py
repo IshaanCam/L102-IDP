@@ -1,5 +1,4 @@
 from machine import Pin, PWM
-import utime
 
 class Motor:
     def __init__(self, dirPin, PWMPin):
