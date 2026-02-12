@@ -10,7 +10,7 @@ BASE_SPEED = 95
 JUNCTION_DETECTED = False
 JUNCTION_ARMED = True
 LF = False
-BAY_DISTANCE_THRESHOLD_MM = 260
+BAY_DISTANCE_THRESHOLD_MM = 240
 prev_pos = 0
 states = [
     'pre-pickup_move',
@@ -21,9 +21,9 @@ states = [
 
 bays = [
     "bay_3",
-    #"bay_4",
+    "bay_4",
     # 'bay_1',
-    # 'bay_2',
+     #'bay_2',
 ]
 
 RIGHT_MOTOR = Motor(7, 6)
@@ -52,9 +52,9 @@ WEIGHTS = [
 ]
 
 pid_controls = {
-    "Kp" : 10,
+    "Kp" : 15,
     "Ki" : 0,
-    "Kd" : 15,
+    "Kd" : 8,
 }
 
 pid = PID(Kp = pid_controls['Kp'], Ki = pid_controls['Ki'], Kd=pid_controls['Kd'], output_limits=(-50, 50))
@@ -139,4 +139,5 @@ WEIGHTS = [-2, -1, 1, 2] #  These will be used for finding our centroid (negativ
 # JUNCTION_ARMED = True
 # JUNCTION_COOLDOWN = 5
 # JUNCTION_TICKER = 0
+
 

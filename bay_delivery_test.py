@@ -1,11 +1,11 @@
 from machine import Pin, PWM, Timer
 import utime
-import pico_upload.utility.config as config
-from pico_upload.utility.path import path as to_and_fro
-from pico_upload.navigation.line_following import line_following
-from pico_upload.navigation.junction_detection import junction_detecter
-from pico_upload.navigation.bay_sense import deliver_sequence
-from pico_upload.navigation.turn import turn, turn_180
+import utility.config as config
+from utility.path import path as to_and_fro
+from navigation.line_following import line_following
+from navigation.junction_detection import junction_detecter
+from navigation.bay_sense import deliver_sequence
+from navigation.turn import turn, turn_180
 
 path = {
     "start": {
@@ -331,7 +331,7 @@ def main():
                 elif bay == "bay_4":
                     turn_180("right", right_motor, left_motor)
             elif st == "pre-delivery_move":
-                position = (bay, "lower_b")
+                position = (bay, "upper_b")
                 movement = to_and_fro[position]
                 for junction in movement:
                     while not config.JUNCTION_DETECTED:
@@ -345,26 +345,11 @@ def main():
                         utime.sleep(0.2)
                     config.LF = True
                     config.JUNCTION_DETECTED = False
-                while not config.JUNCTION_DETECTED:
-                    utime.sleep(0.003)
-                config.JUNCTION_DETECTED = False
-                left_motor.Stop()
-                right_motor.Stop()
-                start_position = "lower_b"
+                start_position = "upper_b"
             elif st == "deliver_box":
-                if start_position == "lower_b" or "upper_a":
-                    deliver_sequence("left")
-                elif start_position == "lower_a" or "upper_b":
-                    deliver_sequence("right")
-                config.LF = False
-                turn("left", right_motor, left_motor)
-                left_motor.Reverse(config.BASE_SPEED)
-                right_motor.Reverse(config.BASE_SPEED)
-                while not config.JUNCTION_DETECTED:
-                    utime.sleep(0.003)
-                config.JUNCTION_DETECTED = False
-                turn("left", right_motor, left_motor)
-                config.LF = True
+                deliver_sequence("left")
+    left_motor.Stop()
+    right_motor.Stop()
 
 def bay_sense_testing():
     button_pin = 14
@@ -384,4 +369,5 @@ def bay_sense_testing():
 
     deliver_sequence("right")
 
-bay_sense_testing()
+main()
+

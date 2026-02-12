@@ -38,3 +38,4 @@ def turn_180(direction: str, right_motor: Motor, left_motor: Motor) -> None:
         # while not config.CENTER_LEFT_SENSOR.read_value():
         #     utime.sleep(0.003)
         left_motor.Forward(config.BASE_SPEED)
+
