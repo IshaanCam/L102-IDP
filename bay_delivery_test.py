@@ -151,6 +151,7 @@ path = {
         ("upper_b", "bay_4"): "forward",
         ("bay_3", "upper_a"): "forward",
         ("bay_4", "upper_a"): "forward",
+        ("bay_4", "upper_b"): "forward",
         ("start", "start"): "forward"
     },
     "top_of_ramp": {
@@ -284,6 +285,7 @@ def main():
     button_pin = 14
     button = Pin(button_pin, Pin.IN, Pin.PULL_DOWN)
     while not button.value():
+        print(button.value())
         utime.sleep(0.003)
     left_motor = config.LEFT_MOTOR
     right_motor = config.RIGHT_MOTOR
@@ -319,6 +321,7 @@ def main():
                 while not config.JUNCTION_DETECTED:
                     utime.sleep(0.003)
                 config.JUNCTION_DETECTED = False
+                utime.sleep(0.2)
                 right_motor.Stop()
                 left_motor.Stop()
             elif (st == "pick_up_box"):
@@ -330,10 +333,12 @@ def main():
                     turn_180("right", right_motor, left_motor)
                 elif bay == "bay_4":
                     turn_180("right", right_motor, left_motor)
+                config.LF = True
             elif st == "pre-delivery_move":
-                position = (bay, "upper_b")
+                position = (bay, "lower_b")
                 movement = to_and_fro[position]
                 for junction in movement:
+                    print(junction)
                     while not config.JUNCTION_DETECTED:
                         utime.sleep(0.003)
                     config.LF = False
@@ -345,11 +350,26 @@ def main():
                         utime.sleep(0.2)
                     config.LF = True
                     config.JUNCTION_DETECTED = False
-                start_position = "upper_b"
+                start_position = "lower_b"
             elif st == "deliver_box":
+                utime.sleep(0.15)
                 deliver_sequence("left")
-    left_motor.Stop()
+                config.LF = True
+    movement = to_and_fro[("lower_b", "start")]
+    for junction in movement:
+        while not config.JUNCTION_DETECTED:
+            utime.sleep(0.003)
+        config.LF = False
+        if path[junction][position] != "forward":
+            turn(path[junction][position], right_motor, left_motor)
+        else:
+            left_motor.Forward()
+            right_motor.Forward()
+            utime.sleep(0.2)
+        config.LF = True
+        config.JUNCTION_DETECTED = False
     right_motor.Stop()
+    left_motor.Stop()
 
 def bay_sense_testing():
     button_pin = 14

@@ -10,7 +10,7 @@ BASE_SPEED = 95
 JUNCTION_DETECTED = False
 JUNCTION_ARMED = True
 LF = False
-BAY_DISTANCE_THRESHOLD_MM = 240
+BAY_DISTANCE_THRESHOLD_MM = 230
 prev_pos = 0
 states = [
     'pre-pickup_move',
@@ -22,8 +22,16 @@ states = [
 bays = [
     "bay_3",
     "bay_4",
-    # 'bay_1',
-     #'bay_2',
+    'bay_1',
+    'bay_2',
+]
+
+drop_offs = [
+    
+    "lower_b",
+    "lower_b",
+    "lower_b",
+    "lower_b"
 ]
 
 RIGHT_MOTOR = Motor(7, 6)
@@ -52,9 +60,9 @@ WEIGHTS = [
 ]
 
 pid_controls = {
-    "Kp" : 15,
+    "Kp" : 30,
     "Ki" : 0,
-    "Kd" : 8,
+    "Kd" : 0,
 }
 
 pid = PID(Kp = pid_controls['Kp'], Ki = pid_controls['Ki'], Kd=pid_controls['Kd'], output_limits=(-50, 50))
