@@ -1,7 +1,6 @@
 import utility.config as config
 import utime
 from machine import Pin, I2C
-from libs.DFRobot_TMF8x01.DFRobot_TMF8x01 import DFRobot_TMF8701
 from navigation.turn import turn
 from libs.VL53L0X.VL53L0X import VL53L0X
 from navigation.turn import turn_180
@@ -78,22 +77,14 @@ def deliver_sequence(side):
             # Drop_box()
 
             # Reverse out of the bay
-            turn_180("left", config.RIGHT_MOTOR, config.LEFT_MOTOR)
-            config.RIGHT_MOTOR.Stop()
-            config.LEFT_MOTOR.Stop()
                 
-            config.RIGHT_MOTOR.Reverse(60)
-            config.LEFT_MOTOR.Reverse(60)
-            utime.sleep(0.5)
-            config.RIGHT_MOTOR.Forward(config.BASE_SPEED)
-            config.LEFT_MOTOR.Forward(config.BASE_SPEED)
+            config.RIGHT_MOTOR.Reverse(config.BASE_SPEED)
+            config.LEFT_MOTOR.Reverse(config.BASE_SPEED)
+            
             while not config.JUNCTION_DETECTED:
                 utime.sleep(0.003)
             config.JUNCTION_DETECTED = False
-            if side == "left":       
-                turn("right", config.RIGHT_MOTOR, config.LEFT_MOTOR)
-            else:
-                turn("left", config.RIGHT_MOTOR, config.LEFT_MOTOR)
+            turn(side, config.RIGHT_MOTOR, config.LEFT_MOTOR)
             config.JUNCTION_DETECTED = False
             while j_crossed > 0:
                 # Move forward to rejoin the line
@@ -110,7 +101,7 @@ def deliver_sequence(side):
             print("Back to original position in reverse orientation")
             break
 
-        else:  
+        else:
             j_crossed += 1
             print("Bay occupied, moving to next junction...")
             config.LEFT_MOTOR.Forward(config.BASE_SPEED)
@@ -121,8 +112,10 @@ def deliver_sequence(side):
                 utime.sleep(0.003)
             config.LF = False
             config.JUNCTION_DETECTED = False
+            utime.sleep(0.05)
             config.LEFT_MOTOR.Stop()
             config.RIGHT_MOTOR.Stop()
             utime.sleep(1)
+            
 
 

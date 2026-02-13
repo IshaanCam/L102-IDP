@@ -285,7 +285,6 @@ def main():
     button_pin = 14
     button = Pin(button_pin, Pin.IN, Pin.PULL_DOWN)
     while not button.value():
-        print(button.value())
         utime.sleep(0.003)
     left_motor = config.LEFT_MOTOR
     right_motor = config.RIGHT_MOTOR
@@ -293,7 +292,6 @@ def main():
 
     left_motor.Forward(base_speed)
     right_motor.Forward(base_speed)
-    print("START")
 
     Timer(mode=1, freq=200, callback=line_following)
     Timer(mode=1, freq=200, callback=junction_detecter)
@@ -326,19 +324,18 @@ def main():
                 left_motor.Stop()
             elif (st == "pick_up_box"):
                 if bay == "bay_1":
-                    turn_180("left", right_motor, left_motor)
+                    turn_180("right", right_motor, left_motor)
                 elif bay == "bay_2":
-                    turn_180("left", right_motor, left_motor)
+                    turn_180("right", right_motor, left_motor)
                 elif bay == "bay_3":
-                    turn_180("right", right_motor, left_motor)
+                    turn_180("left", right_motor, left_motor)
                 elif bay == "bay_4":
-                    turn_180("right", right_motor, left_motor)
+                    turn_180("left", right_motor, left_motor)
                 config.LF = True
             elif st == "pre-delivery_move":
                 position = (bay, "lower_b")
                 movement = to_and_fro[position]
                 for junction in movement:
-                    print(junction)
                     while not config.JUNCTION_DETECTED:
                         utime.sleep(0.003)
                     config.LF = False
@@ -350,26 +347,36 @@ def main():
                         utime.sleep(0.2)
                     config.LF = True
                     config.JUNCTION_DETECTED = False
+                while not config.JUNCTION_DETECTED:
+                    utime.sleep(0.003)
+                config.JUNCTION_DETECTED = False
+                left_motor.Stop()
+                right_motor.Stop()
+                utime.sleep(1)
                 start_position = "lower_b"
             elif st == "deliver_box":
-                utime.sleep(0.15)
-                deliver_sequence("left")
+                #deliver_sequence("left")
+                turn("left", right_motor, left_motor)
+                utime.sleep(0.20)
+                config.LEFT_MOTOR.Stop()
+                config.RIGHT_MOTOR.Stop()
+                utime.sleep(1)
+
+            # Drop_box()
+
+            # Reverse out of the bay
+                
+                config.RIGHT_MOTOR.Reverse(60)
+                config.LEFT_MOTOR.Reverse(60)
+                
+                while not config.JUNCTION_DETECTED:
+                    utime.sleep(0.003)
+                config.JUNCTION_DETECTED = False
+                turn("left", config.RIGHT_MOTOR, config.LEFT_MOTOR)
+                config.JUNCTION_DETECTED = False
                 config.LF = True
-    movement = to_and_fro[("lower_b", "start")]
-    for junction in movement:
-        while not config.JUNCTION_DETECTED:
-            utime.sleep(0.003)
-        config.LF = False
-        if path[junction][position] != "forward":
-            turn(path[junction][position], right_motor, left_motor)
-        else:
-            left_motor.Forward()
-            right_motor.Forward()
-            utime.sleep(0.2)
-        config.LF = True
-        config.JUNCTION_DETECTED = False
-    right_motor.Stop()
     left_motor.Stop()
+    right_motor.Stop()
 
 def bay_sense_testing():
     button_pin = 14
@@ -390,4 +397,5 @@ def bay_sense_testing():
     deliver_sequence("right")
 
 main()
+
 
