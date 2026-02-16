@@ -8,9 +8,9 @@ from navigation.turn import turn_180
 
 # --- Setup TOF Sensors ---
 
-#i2c_bus_vl53_right = I2C(id=1, sda=Pin(10), scl=Pin(11))
+i2c_bus_vl53_right = I2C(id=1, sda=Pin(10), scl=Pin(11))
 i2c_bus_vl53_left = I2C(id=0, sda=Pin(8), scl=Pin(9))
-#vl53l0_r = VL53L0X(i2c_bus_vl53_right)
+vl53l0_r = VL53L0X(i2c_bus_vl53_right)
 vl53l0_l = VL53L0X(i2c_bus_vl53_left)
 
 #   -------------------------------------
@@ -22,12 +22,12 @@ def init_tof(side):
             #utime.sleep(0.1)
         #tof.start_measurement(calib_m=tof.eMODE_NO_CALIB, mode=tof.eDISTANCE) #Distance Mode
 
-    #if side == "right":
+    if side == "right":
          
-        #vl53l0_r.set_Vcsel_pulse_period(vl53l0_r.vcsel_period_type[0], 18)
-        #vl53l0_r.set_Vcsel_pulse_period(vl53l0_r.vcsel_period_type[1], 14)
+        vl53l0_r.set_Vcsel_pulse_period(vl53l0_r.vcsel_period_type[0], 18)
+        vl53l0_r.set_Vcsel_pulse_period(vl53l0_r.vcsel_period_type[1], 14)
 
-        #vl53l0_r.start()
+        vl53l0_r.start()
     if side == "left":
         vl53l0_l.set_Vcsel_pulse_period(vl53l0_l.vcsel_period_type[0], 18)
         vl53l0_l.set_Vcsel_pulse_period(vl53l0_l.vcsel_period_type[1], 14)
@@ -44,10 +44,9 @@ def is_bay_empty(side):
         #print(dist)
         #return dist > config.BAY_DISTANCE_THRESHOLD_MM and dist < 1000
     
-    #if side == "right":
-        #dist = vl53l0_r.read()
-        #print(dist)
-        #return dist > config.BAY_DISTANCE_THRESHOLD_MM and dist < 1000
+    if side == "right":
+        dist = vl53l0_r.read()
+        return dist > config.BAY_DISTANCE_THRESHOLD_MM and dist < 1000
     if side == "left":
         dist = vl53l0_l.read()
         print(dist)
@@ -57,7 +56,7 @@ def is_bay_empty(side):
 
 def deliver_sequence(side):
     init_tof(side)
-    j_crossed = -1
+    j_crossed = 0
 
     while True:
     # We are currently at a junction (stopped)
@@ -68,11 +67,15 @@ def deliver_sequence(side):
             #config.LEFT_MOTOR.Forward(config.BASE_SPEED)
             #config.RIGHT_MOTOR.Forward(config.BASE_SPEED)
             #utime.sleep(0)
-            utime.sleep(0.20)
+            config.SERVO2.Turn(50)
+            utime.sleep(0.6)
             config.LEFT_MOTOR.Stop()
             config.RIGHT_MOTOR.Stop()
             
-            utime.sleep(1)
+            config.SERVO1.Turn(30)
+            utime.sleep(0.2)
+            utime.sleep(0.2)
+            config.SERVO1.Turn(50)
 
             # Drop_box()
 
@@ -84,6 +87,7 @@ def deliver_sequence(side):
             while not config.JUNCTION_DETECTED:
                 utime.sleep(0.003)
             config.JUNCTION_DETECTED = False
+            config.SERVO2.Turn(30)
             turn(side, config.RIGHT_MOTOR, config.LEFT_MOTOR)
             config.JUNCTION_DETECTED = False
             while j_crossed > 0:
@@ -98,6 +102,7 @@ def deliver_sequence(side):
                 config.LF = False
                 j_crossed -= 1
             
+            config.SERVO1.Turn(10)
             print("Back to original position in reverse orientation")
             break
 

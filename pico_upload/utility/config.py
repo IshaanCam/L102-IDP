@@ -22,8 +22,8 @@ states = [
 bays = [
     "bay_3",
     "bay_4",
-    'bay_1',
-    'bay_2',
+    #'bay_1',
+    #'bay_2',
 ]
 
 drop_offs = [
@@ -40,10 +40,10 @@ LEFT_MOTOR = Motor(4, 5)
 SERVO1 = Servo(15)
 SERVO2 = Servo(13)
 
-FAR_RIGHT_SENSOR = LineTracker(28)
-CENTER_RIGHT_SENSOR = LineTracker(27)
-CENTER_LEFT_SENSOR = LineTracker(1)
-FAR_LEFT_SENSOR = LineTracker(3)
+FAR_RIGHT_SENSOR = LineTracker(21)
+CENTER_RIGHT_SENSOR = LineTracker(22)
+CENTER_LEFT_SENSOR = LineTracker(26)
+FAR_LEFT_SENSOR = LineTracker(27)
 
 #LEFT_SIDE_SENSOR = 
 #RIGHT_SIDE_SENSOR = 
@@ -54,6 +54,9 @@ LINE_SENSOR = [
     CENTER_RIGHT_SENSOR,
     FAR_RIGHT_SENSOR,
 ]
+
+LOG_FILE = "logfile.py"
+MAX_LOG_SIZE = 64 * 1024
 
 WEIGHTS = [
     -2, -1, 1, 2

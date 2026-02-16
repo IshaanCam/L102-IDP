@@ -6,6 +6,7 @@ from navigation.line_following import line_following
 from navigation.junction_detection import junction_detecter
 from navigation.bay_sense import deliver_sequence
 from navigation.turn import turn, turn_180
+from utility.resistanceDetection import resistancedetect
 
 path = {
     "start": {
@@ -289,6 +290,8 @@ def main():
     left_motor = config.LEFT_MOTOR
     right_motor = config.RIGHT_MOTOR
     base_speed = config.BASE_SPEED
+    config.SERVO1.Turn(10)
+    config.SERVO2.Turn(30)
 
     left_motor.Forward(base_speed)
     right_motor.Forward(base_speed)
@@ -304,6 +307,7 @@ def main():
             if st == "pre-pickup_move":
                 position = (start_position, bay)
                 movement = to_and_fro[position]
+                config.LF = True
                 for junction in movement:
                     while not config.JUNCTION_DETECTED:
                         utime.sleep(0.003)
@@ -323,6 +327,11 @@ def main():
                 right_motor.Stop()
                 left_motor.Stop()
             elif (st == "pick_up_box"):
+                config.SERVO2.Turn(5)
+                config.SERVO1.Turn(55)
+                resistancedetect()
+                utime.sleep(0.5)
+                config.SERVO2.Turn(30)
                 if bay == "bay_1":
                     turn_180("right", right_motor, left_motor)
                 elif bay == "bay_2":
@@ -333,7 +342,7 @@ def main():
                     turn_180("left", right_motor, left_motor)
                 config.LF = True
             elif st == "pre-delivery_move":
-                position = (bay, "lower_b")
+                position = (bay, "upper_a")
                 movement = to_and_fro[position]
                 for junction in movement:
                     while not config.JUNCTION_DETECTED:
@@ -353,28 +362,10 @@ def main():
                 left_motor.Stop()
                 right_motor.Stop()
                 utime.sleep(1)
-                start_position = "lower_b"
+                start_position = "upper_a"
             elif st == "deliver_box":
-                #deliver_sequence("left")
-                turn("left", right_motor, left_motor)
-                utime.sleep(0.20)
-                config.LEFT_MOTOR.Stop()
-                config.RIGHT_MOTOR.Stop()
-                utime.sleep(1)
+                deliver_sequence("right")
 
-            # Drop_box()
-
-            # Reverse out of the bay
-                
-                config.RIGHT_MOTOR.Reverse(60)
-                config.LEFT_MOTOR.Reverse(60)
-                
-                while not config.JUNCTION_DETECTED:
-                    utime.sleep(0.003)
-                config.JUNCTION_DETECTED = False
-                turn("left", config.RIGHT_MOTOR, config.LEFT_MOTOR)
-                config.JUNCTION_DETECTED = False
-                config.LF = True
     left_motor.Stop()
     right_motor.Stop()
 
@@ -397,5 +388,7 @@ def bay_sense_testing():
     deliver_sequence("right")
 
 main()
+
+
 
 
