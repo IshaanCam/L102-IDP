@@ -8,6 +8,12 @@ from navigation.bay_sense import deliver_sequence
 from navigation.turn import turn, turn_180
 from utility.resistanceDetection import resistancedetect
 
+# Dictionary with information of what to do at each node depending on starting and ending location
+# Key: nodes
+# Value: Dict {
+    # Key: (start, end)
+    # Value: movement directive
+#}
 path = {
     "start": {
         ("start", "bay_3"): "forward",
@@ -281,58 +287,79 @@ path = {
 }
 
 
-def main():
+# Main function combining all functionality
+def main() -> None:
     start_position = "start"
+
+    #Initialise button
     button_pin = 14
     button = Pin(button_pin, Pin.IN, Pin.PULL_DOWN)
+
+    #Initialise LED
+    led = Pin(0, Pin.OUT)
+
+    #Wait for a button press before starting functinon
     while not button.value():
         utime.sleep(0.003)
+    
+    #Initialise motors, servos and base speed
     left_motor = config.LEFT_MOTOR
     right_motor = config.RIGHT_MOTOR
     base_speed = config.BASE_SPEED
     config.SERVO1.Turn(10)
-    config.SERVO2.Turn(30)
+    config.SERVO2.Turn(40)
 
+    #Begin moving forward
     left_motor.Forward(base_speed)
     right_motor.Forward(base_speed)
 
+    #Set up timers for line_following and junction_dectection to run continously in the background and use config variables
+    # to communicate and use their effects.
     Timer(mode=1, freq=200, callback=line_following)
     Timer(mode=1, freq=200, callback=junction_detecter)
 
+    #Wait until you are at the end of the starting box before starting state machine
     while not config.JUNCTION_DETECTED:
         utime.sleep(0.003)
     config.JUNCTION_DETECTED = False
     for bay in config.bays:
+        # Run through the bays in a pre-defined fashion. Not the fastest but lost time minimal and easiest to implement
+        led.value(0)
         for st in config.states:
+            # Start state machine for each pickup journey
             if st == "pre-pickup_move":
+
+                #Use the node list defined in path.py to run through the junctions to hit
                 position = (start_position, bay)
                 movement = to_and_fro[position]
                 config.LF = True
                 for junction in movement:
-                    while not config.JUNCTION_DETECTED:
+                    while not config.JUNCTION_DETECTED: #wait until you hit the expected junction
                         utime.sleep(0.003)
-                    config.LF = False
-                    if path[junction][position] != "forward":
-                        turn(path[junction][position], right_motor, left_motor)
+                    config.LF = False #turn off line_following to allow effective turns
+                    if path[junction][position] != "forward": #use the dictionary above to figure out what to do at the junction
+                        turn(path[junction][position], right_motor, left_motor) #turn as required
                     else:
-                        left_motor.Forward()
+                        left_motor.Forward() #otherwise move forward
                         right_motor.Forward()
                         utime.sleep(0.2)
-                    config.LF = True
+                    config.LF = True #restart line following for next junction
                     config.JUNCTION_DETECTED = False
-                while not config.JUNCTION_DETECTED:
+                while not config.JUNCTION_DETECTED: #once all the junctions have been exhausted, the AGV is now just outside the pickup bays
+                                                    #keep moving until you reach the pickup bays
                     utime.sleep(0.003)
                 config.JUNCTION_DETECTED = False
                 utime.sleep(0.2)
-                right_motor.Stop()
+                right_motor.Stop() #stop and pass functionality to pickup algorithm
                 left_motor.Stop()
             elif (st == "pick_up_box"):
-                config.SERVO2.Turn(5)
-                config.SERVO1.Turn(55)
-                resistancedetect()
+                config.SERVO2.Turn(5) #Move the arms down
+                config.SERVO1.Turn(55) #Clamp the arms onto the reel
+                (led_color, delivery_location) = resistancedetect() #measure its resistance
+                config.LEDS[led_color].value(1) #turn on the appropriate LED
                 utime.sleep(0.5)
-                config.SERVO2.Turn(30)
-                if bay == "bay_1":
+                config.SERVO2.Turn(40) # Raise the arms up
+                if bay == "bay_1": #Due to the walls around the bays, the AGV can only spin in a specific direction. Turn the AGV 180 deg accordingly.
                     turn_180("right", right_motor, left_motor)
                 elif bay == "bay_2":
                     turn_180("right", right_motor, left_motor)
@@ -341,8 +368,8 @@ def main():
                 elif bay == "bay_4":
                     turn_180("left", right_motor, left_motor)
                 config.LF = True
-            elif st == "pre-delivery_move":
-                position = (bay, "upper_a")
+            elif st == "pre-delivery_move": #Same as pre-pickup move. Drops the AGV at the first delivery rack
+                position = (bay, delivery_location)
                 movement = to_and_fro[position]
                 for junction in movement:
                     while not config.JUNCTION_DETECTED:
@@ -362,33 +389,26 @@ def main():
                 left_motor.Stop()
                 right_motor.Stop()
                 utime.sleep(1)
-                start_position = "upper_a"
-            elif st == "deliver_box":
-                deliver_sequence("right")
+                start_position = delivery_location #set the delivery position as the start position for the next bay
+            elif st == "deliver_box": #Execute the delivery sequence
+                if delivery_location == "upper_a" or delivery_location == "lower_b": #The delivery rack defines which sensor gets used (the right or left)
+                    deliver_sequence("left")
+                else:
+                    deliver_sequence("right")
 
-    left_motor.Stop()
+    position = (delivery_location, "start") #Once all the racks have been covered, the AGV is now instructed to return from the delivery bay to start
+    movement = to_and_fro[position]
+    for junction in movement: #Movement algorithm exactly the same, running through junctions executing the tasks at each junction as required
+        while not config.JUNCTION_DETECTED:
+            utime.sleep(0.003)
+        config.LF = False
+        if path[junction][position] != "forward":
+            turn(path[junction][position], right_motor, left_motor)
+        else:
+            left_motor.Forward()
+            right_motor.Forward()
+            utime.sleep(0.2)
+        config.LF = True
+        config.JUNCTION_DETECTED = False
+    left_motor.Stop() #Once in the start box, stop
     right_motor.Stop()
-
-def bay_sense_testing():
-    button_pin = 14
-    button = Pin(button_pin, Pin.IN, Pin.PULL_DOWN)
-    while not button.value():
-        utime.sleep(0.003)
-
-    Timer(mode=1, freq=200, callback=line_following)
-    Timer(mode=1, freq=200, callback=junction_detecter)
-    print("Starting Line Following until first junction")
-
-    config.LF = True
-    while config.JUNCTION_DETECTED == False:
-        utime.sleep(0.01)
-    config.LF = False
-    print("Junction detected, starting right facing deliver sequence")
-
-    deliver_sequence("right")
-
-main()
-
-
-
-

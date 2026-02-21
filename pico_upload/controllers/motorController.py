@@ -9,8 +9,7 @@ class Motor:
         pass
         
     def Stop(self):
-        self.pwm.duty_u16(0)
-        print('Stop')
+        self.pwm.duty_u16(0) # 0 speed, stops the motor
         
     def Forward(self, speed=100):
         self.mDir.value(0)                     # forward = 0 reverse = 1 motor

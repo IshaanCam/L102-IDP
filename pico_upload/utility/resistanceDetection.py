@@ -1,36 +1,26 @@
 from machine import ADC, Pin
 from utime import sleep
 
-def blink(led, times=10, interval=0.1):
-    for _ in range(times):
-        led.value(1)
-        sleep(interval)
-        led.value(0)
-        sleep(interval)
+def resistancedetect() -> tuple[str, str]:
+    """
+    The function measures the resistance using a potential divider circuit. Based on measured thresholds it returns
+    the right LED color and bay location
+    """
+    voltage = ADC(28) #Initialise ADC pin to read voltage
+    sleep(5) # Wait to ensure proper contact and eliminate risks of short circuits
+    val = voltage.read_u16() #Read the voltage
 
-def resistancedetect():
-    voltage = ADC(28)
-    sleep(1)
-    val = voltage.read_u16()
-    
-    blueled = Pin(0, Pin.OUT)
-    greenled = Pin(1, Pin.OUT)
-    redled = Pin(3, Pin.OUT)
-    yellowled = Pin(2, Pin.OUT)
+    #Return LED color, drop off location based on premeasured thresholds.
 
     if (val > 800) and (val < 5000):
-        print("Blue LED blinking")
-        blink(blueled)
+        return ("blue", "upper_a")
 
     elif (val > 6000) and (val < 30000):
-        print("Green LED blinking")
-        blink(greenled)
+        return ("green", "lower_a")
     
     elif (val > 34000) and (val < 40000):
-        print("Red LED blinking")
-        blink(redled)
+        return ('red', "upper_b")
 
-    elif (val > 40000) and (val < 50000):
-        print("Yellow LED blinking")
-        blink(yellowled)
+    else:
+        return ('yellow', "lower_b")
 
